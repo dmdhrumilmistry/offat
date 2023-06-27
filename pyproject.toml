@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "offat"
+version = "0.1.0"
+description = "Offensive API tester tool automates checks for common API vulnerabilities"
+authors = ["Dhrumil Mistry <56185972+dmdhrumilmistry@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+aiohttp = "^3.8.4"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
