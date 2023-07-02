@@ -21,7 +21,7 @@ class OpenAPIParser:
 
 
     def _get_endpoints(self):
-        '''Returns list of endpoint paths along with '''
+        '''Returns list of endpoint paths along with HTTP methods allowed'''
         endpoints = []
 
         for endpoint in self._spec.get('paths', {}).keys():
