@@ -1,6 +1,4 @@
-#from urllib.parse import urljoin
 from prance import ResolvingParser
-# from pprint import pprint as print
 from .logger import create_logger
 
 
