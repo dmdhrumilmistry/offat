@@ -186,9 +186,11 @@ poetry.toml
 pyrightconfig.json
 
 
-## conf files
+## conf/spec files
 conf.yaml
 openapi.yaml
 openapi.json
 specs.yaml
 specs.json
+swagger.yaml
+swagger.json

@@ -35,6 +35,10 @@ class TestRunner:
         if isinstance(response, dict) and response.get('status') in success_codes:
             test_result['result'] = False
             test_result['result_detail'] = 'Endpoint performs HTTP method which is not documented'
+        else:
+            test_result['result'] = True # passed
+            test_result['result_detail'] = 'Endpoint does not perform any HTTP method which is not documented'
+
 
         return test_result
 

@@ -1,4 +1,3 @@
-from urllib.parse import urljoin
 from .test_runner import TestRunnerFiltersEnum
 
 
@@ -18,7 +17,6 @@ class TestGenerator:
         tasks = []
 
         for endpoint, methods_allowed in endpoints:
-            endpoint = urljoin(base_url,endpoint)
             http_methods:set = {'get', 'post', 'put', 'delete', 'options'}
             restricted_methods = http_methods - set(methods_allowed)
 
@@ -26,7 +24,8 @@ class TestGenerator:
                 
                 tasks.append({
                     'test_name':'UnSupported HTTP Method Check',
-                    'url': endpoint,
+                    'url': f'{base_url}{endpoint}',
+                    'endpoint': endpoint,
                     'method': restricted_method.upper(),
                     'args': args,
                     'kwargs': kwargs,

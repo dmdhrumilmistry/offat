@@ -22,7 +22,7 @@ def start():
     test_generator = TestGenerator()
     unsupported_http_endpoint_tests = test_generator.check_unsupported_http_methods(api_parser.base_url, api_parser._get_endpoints())
 
-    # print(unsupported_http_endpoint_tests)
+    # run tests
     test_result = run(test_runner.run_tests(unsupported_http_endpoint_tests))
     print(test_result)
 
