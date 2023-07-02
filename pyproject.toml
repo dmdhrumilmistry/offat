@@ -17,6 +17,18 @@ colorama = "^0.4.6"
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"
 
+
+[tool.poetry.urls]
+"Home" = "https://github.com/dmdhrumilmistry/offat"
+"Bug Tracker" = "https://github.com/dmdhrumilmistry/pyhtools/issues"
+"Support" = "https://github.com/sponsors/dmdhrumilmistry/"
+"PayPal" = "https://paypal.me/dmdhrumilmistry"
+
+
+[tool.poetry.scripts]
+pyhtools = "offat.__main__:start"
+
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
