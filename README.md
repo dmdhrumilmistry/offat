@@ -1,6 +1,6 @@
 # OFFAT - OFFensive Api Tester
 
-Automatically Tests for vulnerabilities after generating tests openapi specification file.
+Automatically Tests for vulnerabilities after generating tests from openapi specification file.
 
 ![UnDocumented petstore API endpoint HTTP method results](./.images/tests/offat-test-undocumented-api-endpoint-http-method.png)
 
