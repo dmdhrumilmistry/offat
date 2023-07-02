@@ -1,6 +1,4 @@
-#from urllib.parse import urljoin
 from prance import ResolvingParser
-# from pprint import pprint as print
 from .logger import create_logger
 
 
@@ -17,7 +15,8 @@ class OpenAPIParser:
             logger.error('Specification file is invalid!')
 
         self._spec = self._parser.specification
-        self.base_url = f"http://{self._spec.get('host')}{self._spec.get('basePath','')}"
+        self.host = self._spec.get('host')
+        self.base_url = f"http://{self.host}{self._spec.get('basePath','')}"
 
 
     def _get_endpoints(self):
@@ -26,7 +25,8 @@ class OpenAPIParser:
 
         for endpoint in self._spec.get('paths', {}).keys():
             methods = list(self._spec['paths'][endpoint].keys())
-            methods.remove('parameters')
+            if 'parameters' in methods:
+                methods.remove('parameters')
             endpoints.append((endpoint, methods))
 
         return endpoints

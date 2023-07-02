@@ -1,5 +1,10 @@
 from argparse import ArgumentParser
+from asyncio import run
+from pprint import pprint as print
 from .openapi import OpenAPIParser
+from .tester.test_generator import TestGenerator
+from .tester.test_runner import TestRunner
+
 
 def start():
     '''Starts cli tool'''
@@ -8,8 +13,18 @@ def start():
     
     args = parser.parse_args()
 
-    api_doc = OpenAPIParser(args.fpath)
-    print(api_doc.base_url)
+    api_parser = OpenAPIParser(args.fpath)
+
+    # create test runner obj
+    test_runner = TestRunner()
+
+    # test for unsupported http methods
+    test_generator = TestGenerator()
+    unsupported_http_endpoint_tests = test_generator.check_unsupported_http_methods(api_parser.base_url, api_parser._get_endpoints())
+
+    # run tests
+    test_result = run(test_runner.run_tests(unsupported_http_endpoint_tests))
+    print(test_result)
 
 if __name__ == '__main__':
     start()
