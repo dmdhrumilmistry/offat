@@ -190,3 +190,5 @@ pyrightconfig.json
 conf.yaml
 openapi.yaml
 openapi.json
+specs.yaml
+specs.json
