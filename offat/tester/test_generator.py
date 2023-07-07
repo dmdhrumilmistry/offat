@@ -1,5 +1,5 @@
 from .test_runner import TestRunnerFiltersEnum
-
+from ..openapi import OpenAPIParser
 
 class TestGenerator:
     '''Class to generate API test checks'''
@@ -32,5 +32,18 @@ class TestGenerator:
                     'success_codes':success_codes,
                     'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER
                 })
+
+        return tasks
+    
+
+    def sqli_fuzz_params(
+            self,
+            base_url:str,
+            request_response_params:dict,
+            success_codes:list[int]=[200,301],
+            *args,
+            **kwargs
+    ):
+        tasks = []
 
         return tasks

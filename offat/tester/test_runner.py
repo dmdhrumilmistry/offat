@@ -39,7 +39,6 @@ class TestRunner:
             test_result['result'] = True # test passed
             test_result['result_detail'] = 'Endpoint does not perform any HTTP method which is not documented'
 
-
         return test_result
 
 
