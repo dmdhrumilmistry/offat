@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "offat"
-version = "0.1.0"
+version = "0.2.0"
 description = "Offensive API tester tool automates checks for common API vulnerabilities"
 authors = ["Dhrumil Mistry <56185972+dmdhrumilmistry@users.noreply.github.com>"]
 license = "MIT"
@@ -21,13 +21,13 @@ pytest = "^7.4.0"
 
 [tool.poetry.urls]
 "Home" = "https://github.com/dmdhrumilmistry/offat"
-"Bug Tracker" = "https://github.com/dmdhrumilmistry/pyhtools/issues"
+"Bug Tracker" = "https://github.com/dmdhrumilmistry/offat/issues"
 "Support" = "https://github.com/sponsors/dmdhrumilmistry/"
 "PayPal" = "https://paypal.me/dmdhrumilmistry"
 
 
 [tool.poetry.scripts]
-pyhtools = "offat.__main__:start"
+offat = "offat.__main__:start"
 
 
 [build-system]

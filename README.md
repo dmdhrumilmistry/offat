@@ -69,7 +69,7 @@ The disclaimer advises users to use the open-source project for ethical and legi
   poetry install
   ```
 
-## Start PyHTools
+## Start OffAT
 
 - run offat
 

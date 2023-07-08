@@ -18,6 +18,22 @@ class TestRunner:
         else:
             self._client = AsyncRequests(headers=headers)
 
+    def _generate_body_payload(self, body_params:list[dict]):
+        '''Generate body payload from passed data'''
+        json_payload = {}
+        for param in body_params:
+            param_in = param.get('in')
+            param_name = param.get('name')
+            param_value = param.get('value')
+
+
+            match param_in:
+                case 'body':
+                    json_payload[param_name] = param_value
+                case _:
+                    continue
+
+        return json_payload
 
     async def status_code_filter_request(self, test_task):
         url = test_task.get('url')
@@ -25,7 +41,10 @@ class TestRunner:
         success_codes = test_task.get('success_codes', [200, 301])
         args = test_task.get('args')
         kwargs = test_task.get('kwargs')
+        body_params = test_task.get('body_params')
 
+        if body_params:
+            kwargs['json'] = self._generate_body_payload(body_params)
         try:
             response = await self._client.request(url=url, method=http_method, *args, **kwargs)
         except ConnectionRefusedError:
@@ -33,11 +52,11 @@ class TestRunner:
 
         test_result = test_task
         if isinstance(response, dict) and response.get('status') in success_codes:
-            test_result['result'] =  False # test failed
-            test_result['result_detail'] = 'Endpoint performs HTTP method which is not documented'
+            result = False # test failed
         else:
-            test_result['result'] = True # test passed 
-            test_result['result_detail'] = 'Endpoint does not perform any HTTP method which is not documented'
+            result = True # test passed
+        test_result['result'] = result
+        test_result['result_details'] = test_result['result_details'].get(result)
 
         return test_result
 
