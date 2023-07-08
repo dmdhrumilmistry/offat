@@ -85,7 +85,7 @@ class OpenAPIParser:
 
         # extract endpoints and supported params
         for path in paths.keys():
-            path_params = paths[path].get('parameters')
+            path_params = paths[path].get('parameters',[])
 
             for http_method in paths.get(path,{}).keys():
                 # confider only http methods
@@ -93,7 +93,7 @@ class OpenAPIParser:
                     continue
                 
 
-                body_parameters = paths[path][http_method].get('parameters')
+                body_parameters = paths[path][http_method].get('parameters',[])
                 response_params = self._get_response_definition_schema(paths[path][http_method].get('responses',{}))
 
                 # create list of parameters

@@ -1,4 +1,5 @@
 from .test_runner import TestRunnerFiltersEnum
+from copy import deepcopy
 from ..openapi import OpenAPIParser
 from pprint import pprint as print
 
@@ -84,6 +85,59 @@ class TestGenerator:
         return tasks
     
 
+    def __get_request_params_list(self, request_params:list[dict]):
+        '''Get list of request parameters
+        '''
+        payload_data  = []
+        for request_param in request_params:
+            param_pos = request_param.get('in')
+            param_schema = request_param.get('schema')
+
+            if param_schema:
+                props:dict = param_schema.get('properties',{})
+                required_params:list = param_schema.get('required',[])
+
+                for prop in props.keys():
+                    # TODO: handle arrays differently to
+                    # extract their internal params
+                    prop_type = props[prop].get('type')
+                    payload_data.append({
+                        'in':param_pos,
+                        'name':prop,
+                        'type':prop_type,
+                        'required': prop in required_params,
+                    })
+
+        return payload_data
+    
+    def __inject_sqli_payload_in_params(self, request_params:list[dict]):
+        malicious_params = []
+        basic_sqli_payloads = [
+            "' OR 1=1 ;--",
+            "' UNION SELECT 1,2,3 -- -",
+            "' OR '1'='1--",
+            "' AND (SELECT * FROM (SELECT(SLEEP(5)))abc)",
+            "' AND SLEEP(5) --",
+        ]
+
+        request_params = self.__get_request_params_list(request_params)
+
+        # filter params with string value 
+        # TODO: we're missing out required params here, 
+        # required param should be considered
+        request_params = list(filter(lambda param: param.get('required')==True or param.get('type')=='string', request_params))
+
+        # inject sqli payload as param value
+        for request_param_data in request_params:
+            if request_param_data.get('type') == 'string':
+                for payload in basic_sqli_payloads:
+                    new_request = deepcopy(request_param_data)
+                    new_request['value'] = payload
+                    malicious_params.append(new_request)
+
+        return malicious_params
+        
+
     def sqli_fuzz_params(
             self,
             openapi_parser:OpenAPIParser,
@@ -107,13 +161,6 @@ class TestGenerator:
         '''
         base_url:str = openapi_parser.base_url
         request_response_params:dict = openapi_parser.request_response_params
-        basic_sqli_payloads = [
-            "' OR 1=1 --",
-            "' UNION SELECT 1,2,3 -- -",
-            "' OR '1'='1",
-            "' AND (SELECT * FROM (SELECT(SLEEP(5)))abc)",
-            "' AND SLEEP(5) --",
-        ]
 
         # APPROACH: first send sqli in all params, if error is generated
         # then enumerate one by one or ask user to pentest manually using
@@ -123,22 +170,24 @@ class TestGenerator:
         # TODO: handle path params in future
         # NOTE: skip paths containing in path variables and no body params for now!!.
         request_response_params = list(filter(lambda x: len(x.get('path_params',[]))==0 and len(x.get('request_params',[]))>0, request_response_params))
-        print(request_response_params)
 
+        # inject SQLi payloads in string variables
+        for request_obj in request_response_params:
+            request_params = request_obj.get('request_params')
+            request_path = request_obj.get('path')
 
-        # for 
+            malicious_request_params = self.__inject_sqli_payload_in_params(request_params)
 
-        # tasks.append({
-        #     'test_name':'UnSupported HTTP Method Check',
-        #     'url': f'{base_url}{endpoint}',
-        #     'endpoint': endpoint,
-        #     'method': restricted_method.upper(),
-        #     'args': args,
-        #     'kwargs': kwargs,
-        #     'success_codes':success_codes,
-        #     'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER
-        # })
-
-
+            tasks.append({
+                'test_name':'UnSupported HTTP Method Check',
+                'url': f'{base_url}{request_path}',
+                'endpoint': request_path,
+                'method': request_obj.get('http_method').upper(),
+                'body_params':malicious_request_params,
+                'args': args,
+                'kwargs': kwargs,
+                'success_codes':success_codes,
+                'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER
+            })
 
         return tasks
