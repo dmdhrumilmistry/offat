@@ -33,11 +33,11 @@ class TestRunner:
 
         test_result = test_task
         if isinstance(response, dict) and response.get('status') in success_codes:
-            test_result['result'] = False # test failed
-            test_result['result_detail'] = 'Endpoint performs HTTP method which is not documented'
+            result = False # test failed
         else:
-            test_result['result'] = True # test passed
-            test_result['result_detail'] = 'Endpoint does not perform any HTTP method which is not documented'
+            result = True # test passed
+        test_result['result'] = result
+        test_result['result_details'] = test_result['result_details'].get(result)
 
         return test_result
 

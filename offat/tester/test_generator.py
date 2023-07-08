@@ -78,6 +78,10 @@ class TestGenerator:
                     'method': restricted_method.upper(),
                     'args': args,
                     'kwargs': kwargs,
+                    'result_details':{
+                        True: 'Endpoint does not perform any HTTP method which is not documented', # passed
+                        False: 'Endpoint performs HTTP method which is not documented', # failed
+                    },
                     'success_codes':success_codes,
                     'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER
                 })
@@ -196,8 +200,13 @@ class TestGenerator:
                     'endpoint': request_path,
                     'method': request_obj.get('http_method').upper(),
                     'body_params':malicious_request_params,
+                    'malicious_payload':sqli_payload,
                     'args': args,
                     'kwargs': kwargs,
+                    'result_detail':{
+                        True:'Parameters are not vulnerable to SQLi Payload', # passed
+                        False:'One or more parameter is vulnerable to SQL Injection Attack', # failed
+                    },
                     'success_codes':success_codes,
                     'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER
                 })
