@@ -1,10 +1,18 @@
 # OFFAT - OFFensive Api Tester
 
-Automatically Tests for vulnerabilities after generating tests from openapi specification file.
+Automatically Tests for vulnerabilities after generating tests from openapi specification file. Project is in Beta stage, so sometimes it might crash while running.
 
 ![UnDocumented petstore API endpoint HTTP method results](./.images/tests/offat-test-undocumented-api-endpoint-http-method.png)
 
+## Features
+- [X] Restricted HTTP Methods
+- [X] SQLi
+- [ ] BOLA
+- [ ] Broken Authentication
+
 ## PyPi Downloads
+
+[![Upload offat Python Package to PyPi](https://github.com/dmdhrumilmistry/offat/actions/workflows/pypi-publish.yml/badge.svg)](https://github.com/dmdhrumilmistry/offat/actions/workflows/pypi-publish.yml)
 
 |Period|Count|
 |:----:|:---:|
