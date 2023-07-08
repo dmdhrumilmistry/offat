@@ -149,7 +149,7 @@ class TestGenerator:
     def sqli_fuzz_params(
             self,
             openapi_parser:OpenAPIParser,
-            success_codes:list[int]=[500],
+            success_codes:list[int]=[403,405,500],
             *args,
             **kwargs
     ):
@@ -203,7 +203,7 @@ class TestGenerator:
                     'malicious_payload':sqli_payload,
                     'args': args,
                     'kwargs': kwargs,
-                    'result_detail':{
+                    'result_details':{
                         True:'Parameters are not vulnerable to SQLi Payload', # passed
                         False:'One or more parameter is vulnerable to SQL Injection Attack', # failed
                     },

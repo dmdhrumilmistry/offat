@@ -116,13 +116,3 @@ class AsyncRLRequests(AsyncRequests):
             response = await super().request(url, method, session, *args, **kwargs)
             await asyncio.sleep(self._delay)
             return response
-
-
-# async def test():
-#     req = AsyncRLRequests(delay=4)
-#     res = await asyncio.gather(asyncio.ensure_future(await req.request('https://httpbin.org/get', method='GET')))
-
-#     print(res[-1])
-
-# if __name__ == '__main__':
-#     asyncio.run(test())

@@ -23,18 +23,17 @@ def start():
 
     
     # test for unsupported http methods
-    unsupported_http_endpoint_tests = test_generator.check_unsupported_http_methods(api_parser.base_url, api_parser._get_endpoints())
-    test_results = run(test_runner.run_tests(unsupported_http_endpoint_tests))
-    results = test_table_generator.generate_result_table(test_results)
-    print(results)
+    # unsupported_http_endpoint_tests = test_generator.check_unsupported_http_methods(api_parser.base_url, api_parser._get_endpoints())
+    # test_results = run(test_runner.run_tests(unsupported_http_endpoint_tests))
+    # results = test_table_generator.generate_result_table(test_results)
+    # print(results)
 
 
     # sqli fuzz test
-    # sqli_fuzz_tests = test_generator.sqli_fuzz_params(api_parser)
-    # test_results = run(test_runner.run_tests(sqli_fuzz_tests))
-    # print(test_results)
-    # results = test_table_generator.generate_result_table(test_results)
-    # print(results)
+    sqli_fuzz_tests = test_generator.sqli_fuzz_params(api_parser)
+    test_results = run(test_runner.run_tests(sqli_fuzz_tests))
+    results = test_table_generator.generate_result_table(test_results)
+    print(results)
 
     # generate results
 

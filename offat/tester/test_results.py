@@ -27,5 +27,5 @@ class TestResultTable:
             del result['test_name']
             del result['response_filter']
             del result['success_codes']
-
+            del result['body_params']
         return results
