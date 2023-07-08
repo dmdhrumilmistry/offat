@@ -110,16 +110,21 @@ class TestGenerator:
 
         return payload_data
     
-    def __inject_sqli_payload_in_params(self, request_params:list[dict]):
-        malicious_params = []
-        basic_sqli_payloads = [
-            "' OR 1=1 ;--",
-            "' UNION SELECT 1,2,3 -- -",
-            "' OR '1'='1--",
-            "' AND (SELECT * FROM (SELECT(SLEEP(5)))abc)",
-            "' AND SLEEP(5) --",
-        ]
+    
+    def __inject_sqli_payload_in_params(self, request_params:list[dict], sqli_payload:str):
+        """
+        Injects SQL injection (SQLi) payload into the request parameters.
 
+        This method modifies the provided request parameters by injecting the SQLi payload.
+
+        Args:
+            request_params (list[dict]): A list of dictionaries representing the request parameters.
+            sqli_payload (str): The SQL injection payload to be injected into the request parameters.
+
+        Returns:
+            list: returns list of sqli injection parameters for API testing
+        """
+        malicious_params = []
         request_params = self.__get_request_params_list(request_params)
 
         # filter params with string value 
@@ -130,10 +135,9 @@ class TestGenerator:
         # inject sqli payload as param value
         for request_param_data in request_params:
             if request_param_data.get('type') == 'string':
-                for payload in basic_sqli_payloads:
-                    new_request = deepcopy(request_param_data)
-                    new_request['value'] = payload
-                    malicious_params.append(new_request)
+                new_request = deepcopy(request_param_data)
+                new_request['value'] = sqli_payload
+                malicious_params.append(new_request)
 
         return malicious_params
         
@@ -166,28 +170,36 @@ class TestGenerator:
         # then enumerate one by one or ask user to pentest manually using
         # sqlmap
         tasks = []
+        basic_sqli_payloads = [
+            "' OR 1=1 ;--",
+            "' UNION SELECT 1,2,3 -- -",
+            "' OR '1'='1--",
+            "' AND (SELECT * FROM (SELECT(SLEEP(5)))abc)",
+            "' AND SLEEP(5) --",
+        ]
 
         # TODO: handle path params in future
         # NOTE: skip paths containing in path variables and no body params for now!!.
         request_response_params = list(filter(lambda x: len(x.get('path_params',[]))==0 and len(x.get('request_params',[]))>0, request_response_params))
 
         # inject SQLi payloads in string variables
-        for request_obj in request_response_params:
-            request_params = request_obj.get('request_params')
-            request_path = request_obj.get('path')
+        for sqli_payload in basic_sqli_payloads:
+            for request_obj in request_response_params:
+                request_params = request_obj.get('request_params')
+                request_path = request_obj.get('path')
 
-            malicious_request_params = self.__inject_sqli_payload_in_params(request_params)
+                malicious_request_params = self.__inject_sqli_payload_in_params(request_params, sqli_payload)
 
-            tasks.append({
-                'test_name':'UnSupported HTTP Method Check',
-                'url': f'{base_url}{request_path}',
-                'endpoint': request_path,
-                'method': request_obj.get('http_method').upper(),
-                'body_params':malicious_request_params,
-                'args': args,
-                'kwargs': kwargs,
-                'success_codes':success_codes,
-                'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER
-            })
+                tasks.append({
+                    'test_name':'SQLi Test',
+                    'url': f'{base_url}{request_path}',
+                    'endpoint': request_path,
+                    'method': request_obj.get('http_method').upper(),
+                    'body_params':malicious_request_params,
+                    'args': args,
+                    'kwargs': kwargs,
+                    'success_codes':success_codes,
+                    'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER
+                })
 
         return tasks
