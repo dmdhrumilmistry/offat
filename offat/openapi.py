@@ -17,6 +17,7 @@ class OpenAPIParser:
         self._spec = self._parser.specification
         self.host = self._spec.get('host')
         self.base_url = f"http://{self.host}{self._spec.get('basePath','')}"
+        self.request_response_params = self._get_request_response_params()
 
 
     def _get_endpoints(self):
@@ -99,12 +100,12 @@ class OpenAPIParser:
                 for param in body_parameters:
                     param['schema'] = self._get_param_definition_schema(param)
 
-            requests.append({
-                    'http_method':http_method,
-                    'path':path,
-                    'request_params':body_parameters,
-                    'response_params':response_params,
-                    'path_params':path_params,
-            })
+                requests.append({
+                        'http_method':http_method,
+                        'path':path,
+                        'request_params':body_parameters,
+                        'response_params':response_params,
+                        'path_params':path_params,
+                })
 
         return requests

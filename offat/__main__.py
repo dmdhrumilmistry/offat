@@ -16,19 +16,18 @@ def start():
 
     api_parser = OpenAPIParser(args.fpath)
 
-    # create test objs
+    # create tester objs
     test_runner = TestRunner()
     test_table_generator = TestResultTable()
-
-    # test for unsupported http methods
     test_generator = TestGenerator()
+
+    
+    # test for unsupported http methods
     # unsupported_http_endpoint_tests = test_generator.check_unsupported_http_methods(api_parser.base_url, api_parser._get_endpoints())
 
-
-    # for sqli test
-    request_respone_params = api_parser._get_request_response_params()
-    print(request_respone_params)
-    # test_generator.sqli_fuzz_params(api_parser.base_url, request_respone_params)
+    # sqli fuzz test
+    sqli_fuzz_tests = test_generator.sqli_fuzz_params(api_parser)
+    print(sqli_fuzz_tests)
 
     # run tests
     # test_results = run(test_runner.run_tests(unsupported_http_endpoint_tests))
