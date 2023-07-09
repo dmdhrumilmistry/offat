@@ -1,7 +1,8 @@
 from colorama import Fore, Style, init
-init(autoreset=True)
-
 import logging
+
+
+init(autoreset=True)
 
 
 class ColoredLogger(logging.Formatter):
