@@ -10,6 +10,10 @@ Automatically Tests for vulnerabilities after generating tests from openapi spec
 - [ ] BOLA
 - [ ] Broken Authentication
 
+## Demo
+
+[![asciicast](https://asciinema.org/a/9MSwl7UafIVT3iJn13OcvWXeF.svg)](https://asciinema.org/a/9MSwl7UafIVT3iJn13OcvWXeF)
+
 ## PyPi Downloads
 
 [![Upload offat Python Package to PyPi](https://github.com/dmdhrumilmistry/offat/actions/workflows/pypi-publish.yml/badge.svg)](https://github.com/dmdhrumilmistry/offat/actions/workflows/pypi-publish.yml)
