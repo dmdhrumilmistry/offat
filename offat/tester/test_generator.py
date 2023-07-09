@@ -82,6 +82,7 @@ class TestGenerator:
                         True: 'Endpoint does not perform any HTTP method which is not documented', # passed
                         False: 'Endpoint performs HTTP method which is not documented', # failed
                     },
+                    'body_params':[],
                     'success_codes':success_codes,
                     'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER
                 })
