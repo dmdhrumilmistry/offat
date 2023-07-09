@@ -163,7 +163,7 @@ class TestGenerator:
             **kwargs: Arbitrary keyword arguments.
         
         Returns:
-            None
+            List: List of dictionaries containing tests for SQLi
         
         Raises:
             Any exceptions raised during the execution.
@@ -213,3 +213,27 @@ class TestGenerator:
                 })
 
         return tasks
+    
+
+    def bola_path_test(
+            self,
+            openapi_parser:OpenAPIParser,
+            success_codes:list[int]=[200, 201, 301],
+            *args,
+            **kwargs
+    ):
+        '''Generate Tests for BOLA in endpoint path
+        
+        Args:
+            openapi_parser (OpenAPIParser): An instance of the OpenAPIParser class containing the parsed OpenAPI specification.
+            success_codes (list[int], optional): A list of HTTP success codes to consider as successful BOLA responses. Defaults to [200, 201, 301].
+            *args: Variable-length positional arguments.
+            **kwargs: Arbitrary keyword arguments.
+        
+        Returns:
+            None
+        
+        Raises:
+            Any exceptions raised during the execution.
+        '''
+        
