@@ -1,7 +1,9 @@
-from .test_runner import TestRunnerFiltersEnum
 from copy import deepcopy
-from ..openapi import OpenAPIParser
 from pprint import pprint as print
+from random import randint
+from .test_runner import TestRunnerFiltersEnum
+from ..openapi import OpenAPIParser
+from .fuzzer import fill_params
 
 
 class TestGenerator:
@@ -190,8 +192,8 @@ class TestGenerator:
         # inject SQLi payloads in string variables
         for sqli_payload in basic_sqli_payloads:
             for request_obj in request_response_params:
-                request_params = request_obj.get('request_params')
-                request_path = request_obj.get('path')
+                request_params = request_obj.get('request_params',[])
+                request_path = request_obj.get('path',[])
 
                 malicious_request_params = self.__inject_sqli_payload_in_params(request_params, sqli_payload)
 
@@ -236,4 +238,40 @@ class TestGenerator:
         Raises:
             Any exceptions raised during the execution.
         '''
+        base_url:str = openapi_parser.base_url
+        request_response_params:list[dict] = openapi_parser.request_response_params
+        # print(request_response_params)
+
         
+
+        # get request params list
+        # request_params_list = list(map(lambda x: self.__get_request_params_list(x.get('request_params',[])), request_response_params))
+        # print(request_params_list)
+
+
+        # filter path containing params in path
+        endpoints_with_param_in_path = list(filter(lambda path_obj: '/{' in path_obj.get('path'), request_response_params))
+
+        # get 
+
+        tasks = []
+        for path_obj in endpoints_with_param_in_path:
+            print('HTTP PATH:')
+            print(path_obj.get('http_method') + str(path_obj.get('path')))
+
+            # handle path params from path_params
+            # path_params = path_obj.get('path_params',[])
+            # path_params = fill_params(path_params)
+            # print('PATH PARAMS:')
+            # print(path_params)
+
+            # handle path params from request_params
+            print('REQUEST PARAMS:')
+            request_params = path_obj.get('request_params',[])
+            request_params = fill_params(request_params)
+            
+            print(request_params)
+            print('-'*20)
+
+
+        return tasks
