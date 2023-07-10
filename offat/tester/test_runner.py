@@ -18,6 +18,7 @@ class TestRunner:
         else:
             self._client = AsyncRequests(headers=headers)
 
+
     def _generate_body_payload(self, body_params:list[dict]):
         '''Generate body payload from passed data'''
         json_payload = {}
@@ -26,6 +27,7 @@ class TestRunner:
             param_name = param.get('name')
             param_value = param.get('value')
 
+            # TODO:handle schema
 
             match param_in:
                 case 'body':
@@ -34,6 +36,7 @@ class TestRunner:
                     continue
 
         return json_payload
+    
 
     async def status_code_filter_request(self, test_task):
         url = test_task.get('url')

@@ -240,38 +240,52 @@ class TestGenerator:
         '''
         base_url:str = openapi_parser.base_url
         request_response_params:list[dict] = openapi_parser.request_response_params
-        # print(request_response_params)
-
-        
 
         # get request params list
         # request_params_list = list(map(lambda x: self.__get_request_params_list(x.get('request_params',[])), request_response_params))
         # print(request_params_list)
 
-
         # filter path containing params in path
         endpoints_with_param_in_path = list(filter(lambda path_obj: '/{' in path_obj.get('path'), request_response_params))
 
-        # get 
-
         tasks = []
         for path_obj in endpoints_with_param_in_path:
-            print('HTTP PATH:')
-            print(path_obj.get('http_method') + str(path_obj.get('path')))
-
-            # handle path params from path_params
-            # path_params = path_obj.get('path_params',[])
-            # path_params = fill_params(path_params)
-            # print('PATH PARAMS:')
-            # print(path_params)
-
             # handle path params from request_params
-            print('REQUEST PARAMS:')
             request_params = path_obj.get('request_params',[])
             request_params = fill_params(request_params)
-            
-            print(request_params)
-            print('-'*20)
+            path_params_in_request_params = list(filter(lambda x: x.get('in') == 'path', request_params)) # few path params are available in request params
+            request_params = list(filter(lambda x: x.get('in') == 'body', request_params))
 
+            # handle path params from path_params
+            path_params = path_obj.get('path_params',[])
+            path_params = fill_params(path_params) + path_params_in_request_params
+
+            # replace path params by value in endpoint path
+            endpoint_path:str = path_obj.get('path')
+
+            print(path_params)
+            for path_param in path_params:
+                # print(path_param)
+                path_param_name = path_param.get('name')
+                path_param_value = path_param.get('value')
+                endpoint_path = endpoint_path.replace('{' + str(path_param_name) + '}', str(path_param_value))
+
+
+            tasks.append({
+                'test_name':'BOLA Path Test',
+                'url': f'{base_url}{endpoint_path}',
+                'endpoint': path_obj.get('path'),
+                'method': path_obj.get('http_method').upper(),
+                'body_params':request_params,
+                'malicious_payload':path_params,
+                'args': args,
+                'kwargs': kwargs,
+                'result_details':{
+                    True:'Parameters are not vulnerable to SQLi Payload', # passed
+                    False:'One or more parameter is vulnerable to SQL Injection Attack', # failed
+                },
+                'success_codes':success_codes,
+                'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER
+            })
 
         return tasks

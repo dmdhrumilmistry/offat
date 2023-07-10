@@ -73,7 +73,7 @@ def fill_params(params:list[dict]):
         
         if param.get('schema'):
             schema_obj = param.get('schema',{}).get('properties',{})
-            fill_schema_params(schema_obj, param_is_required)
+            param['schema'] = fill_schema_params(schema_obj, param_is_required)
         else:
             param['value'] = param_value
 
