@@ -253,22 +253,27 @@ class TestGenerator:
             # handle path params from request_params
             request_params = path_obj.get('request_params',[])
             request_params = fill_params(request_params)
-            path_params_in_request_params = list(filter(lambda x: x.get('in') == 'path', request_params)) # few path params are available in request params
-            request_params = list(filter(lambda x: x.get('in') == 'body', request_params))
+
+            # get request body params
+            request_body_params = list(filter(lambda x: x.get('in') == 'body', request_params))
+
+            # TODO: handle request query params
 
             # handle path params from path_params
             path_params = path_obj.get('path_params',[])
-            path_params = fill_params(path_params) + path_params_in_request_params
+            path_params = fill_params(path_params)
 
             # replace path params by value in endpoint path
             endpoint_path:str = path_obj.get('path')
 
-            print(path_params)
             for path_param in path_params:
-                # print(path_param)
                 path_param_name = path_param.get('name')
                 path_param_value = path_param.get('value')
                 endpoint_path = endpoint_path.replace('{' + str(path_param_name) + '}', str(path_param_value))
+                print('PARAM data:')
+                print(path_param_name)
+                print(path_param_value)
+                print(endpoint_path)
 
 
             tasks.append({
@@ -276,16 +281,17 @@ class TestGenerator:
                 'url': f'{base_url}{endpoint_path}',
                 'endpoint': path_obj.get('path'),
                 'method': path_obj.get('http_method').upper(),
-                'body_params':request_params,
+                'body_params':request_body_params,
                 'malicious_payload':path_params,
                 'args': args,
                 'kwargs': kwargs,
                 'result_details':{
-                    True:'Parameters are not vulnerable to SQLi Payload', # passed
-                    False:'One or more parameter is vulnerable to SQL Injection Attack', # failed
+                    True:'Endpoint might be vulnerable to BOLA', # passed
+                    False:'Endpoint is not vulnerable to BOLA', # failed
                 },
                 'success_codes':success_codes,
                 'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER
             })
+            print('-'*20)
 
         return tasks

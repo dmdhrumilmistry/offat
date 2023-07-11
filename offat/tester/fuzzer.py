@@ -23,7 +23,7 @@ def generate_random_string(length):
     return ''.join(random.choice(characters) for _ in range(length))
 
 
-def fill_schema_params(params:dict[dict], is_required:bool=None):
+def fill_schema_params(params:dict[dict], param_in:str=None,is_required:bool=None):
     schema_params = []
     for var_name,var_data in params.items():
         var_type = var_data.get('type')
@@ -51,15 +51,20 @@ def fill_schema_params(params:dict[dict], is_required:bool=None):
         if is_required:
             var_data['required'] = is_required
 
+        if param_in:
+            var_data['in'] = param_in
+
         schema_params.append(var_data)
 
     return schema_params
 
 
 def fill_params(params:list[dict]):
-    for param in params:
-        param_type = param.get('type')
-        param_is_required = param.get('required')
+    schema_params = []
+    for index in range(len(params)):
+        param_type = params[index].get('type')
+        param_is_required = params[index].get('required')
+        param_in = params[index].get('in')
 
         match param_type:
             case 'string':
@@ -67,14 +72,26 @@ def fill_params(params:list[dict]):
 
             case 'integer':
                 param_value = random.randint(0,1000)
-
+            
+            # TODO: handle file type
+            
             case _: # default case
                 param_value = generate_random_string(10)
         
-        if param.get('schema'):
-            schema_obj = param.get('schema',{}).get('properties',{})
-            param['schema'] = fill_schema_params(schema_obj, param_is_required)
+        if params[index].get('schema'):
+            schema_obj = params[index].get('schema',{}).get('properties',{})
+            filled_schema_params = fill_schema_params(schema_obj, param_in, param_is_required)
+
+            schema_params.append(filled_schema_params)
         else:
-            param['value'] = param_value
+            params[index]['value'] = param_value
+
+    # delete schema params
+    for param in params:
+        if param.get('schema'):
+            params.remove(param)
+
+    for schema_param in schema_params:
+        params += schema_param
 
     return params
