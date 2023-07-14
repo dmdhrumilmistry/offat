@@ -1,7 +1,8 @@
-from .test_runner import TestRunnerFiltersEnum
 from copy import deepcopy
+from random import randint
+from .test_runner import TestRunnerFiltersEnum
 from ..openapi import OpenAPIParser
-from pprint import pprint as print
+from .fuzzer import fill_params
 
 
 class TestGenerator:
@@ -147,7 +148,7 @@ class TestGenerator:
         return malicious_params
         
 
-    def sqli_fuzz_params(
+    def sqli_fuzz_params_test(
             self,
             openapi_parser:OpenAPIParser,
             success_codes:list[int]=[403,405,500],
@@ -163,7 +164,7 @@ class TestGenerator:
             **kwargs: Arbitrary keyword arguments.
         
         Returns:
-            None
+            List: List of dictionaries containing tests for SQLi
         
         Raises:
             Any exceptions raised during the execution.
@@ -190,8 +191,8 @@ class TestGenerator:
         # inject SQLi payloads in string variables
         for sqli_payload in basic_sqli_payloads:
             for request_obj in request_response_params:
-                request_params = request_obj.get('request_params')
-                request_path = request_obj.get('path')
+                request_params = request_obj.get('request_params',[])
+                request_path = request_obj.get('path',[])
 
                 malicious_request_params = self.__inject_sqli_payload_in_params(request_params, sqli_payload)
 
@@ -211,5 +212,81 @@ class TestGenerator:
                     'success_codes':success_codes,
                     'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER
                 })
+
+        return tasks
+    
+
+    def bola_path_test(
+            self,
+            openapi_parser:OpenAPIParser,
+            success_codes:list[int]=[200, 201, 301],
+            *args,
+            **kwargs
+    ):
+        '''Generate Tests for BOLA in endpoint path
+        
+        Args:
+            openapi_parser (OpenAPIParser): An instance of the OpenAPIParser class containing the parsed OpenAPI specification.
+            success_codes (list[int], optional): A list of HTTP success codes to consider as successful BOLA responses. Defaults to [200, 201, 301].
+            *args: Variable-length positional arguments.
+            **kwargs: Arbitrary keyword arguments.
+        
+        Returns:
+            None
+        
+        Raises:
+            Any exceptions raised during the execution.
+        '''
+        base_url:str = openapi_parser.base_url
+        request_response_params:list[dict] = openapi_parser.request_response_params
+
+        # get request params list
+        # request_params_list = list(map(lambda x: self.__get_request_params_list(x.get('request_params',[])), request_response_params))
+
+        # filter path containing params in path
+        endpoints_with_param_in_path = list(filter(lambda path_obj: '/{' in path_obj.get('path'), request_response_params))
+
+        tasks = []
+        for path_obj in endpoints_with_param_in_path:
+            # handle path params from request_params
+            request_params = path_obj.get('request_params',[])
+            request_params = fill_params(request_params)
+
+            # get request body params
+            request_body_params = list(filter(lambda x: x.get('in') == 'body', request_params))
+
+            # handle path params from path_params
+            # and replace path params by value in 
+            # endpoint path
+            endpoint_path:str = path_obj.get('path')
+
+            path_params = path_obj.get('path_params',[])
+            path_params_in_body = list(filter(lambda x: x.get('in') == 'path', request_params))
+            path_params += path_params_in_body
+            path_params = fill_params(path_params)
+
+            for path_param in path_params:
+                path_param_name = path_param.get('name')
+                path_param_value = path_param.get('value')
+                endpoint_path = endpoint_path.replace('{' + str(path_param_name) + '}', str(path_param_value))
+
+            # TODO: handle request query params
+
+            tasks.append({
+                'test_name':'BOLA Path Test',
+                'url': f'{base_url}{endpoint_path}',
+                'endpoint': path_obj.get('path'),
+                'method': path_obj.get('http_method').upper(),
+                'body_params':request_body_params,
+                'malicious_payload':path_params,
+                'args': args,
+                'kwargs': kwargs,
+                'result_details':{
+                    True:'Endpoint is not vulnerable to BOLA', # passed
+                    False:'Endpoint might be vulnerable to BOLA', # failed
+                },
+                'success_codes':success_codes,
+                'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER
+            })
 
         return tasks

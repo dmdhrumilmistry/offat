@@ -64,4 +64,3 @@ def read_openapi_file(file_path:str) -> dict:
             return read_yaml(file_path)
         case _:
             return {"error":"Invalid file extension"}
-    
