@@ -1,5 +1,4 @@
 from copy import deepcopy
-from pprint import pprint as print
 from random import randint
 from .test_runner import TestRunnerFiltersEnum
 from ..openapi import OpenAPIParser
@@ -149,7 +148,7 @@ class TestGenerator:
         return malicious_params
         
 
-    def sqli_fuzz_params(
+    def sqli_fuzz_params_test(
             self,
             openapi_parser:OpenAPIParser,
             success_codes:list[int]=[403,405,500],
@@ -243,7 +242,6 @@ class TestGenerator:
 
         # get request params list
         # request_params_list = list(map(lambda x: self.__get_request_params_list(x.get('request_params',[])), request_response_params))
-        # print(request_params_list)
 
         # filter path containing params in path
         endpoints_with_param_in_path = list(filter(lambda path_obj: '/{' in path_obj.get('path'), request_response_params))
@@ -257,24 +255,26 @@ class TestGenerator:
             # get request body params
             request_body_params = list(filter(lambda x: x.get('in') == 'body', request_params))
 
-            # TODO: handle request query params
+
 
             # handle path params from path_params
+            # and replace path params by value in 
+            # endpoint path
             path_params = path_obj.get('path_params',[])
-            path_params = fill_params(path_params)
+            path_params_in_body = list(filter(lambda x: x.get('in') == 'path', request_params))
+            path_params += path_params_in_body
 
-            # replace path params by value in endpoint path
+            path_params = fill_params(path_params)
+            
+            
             endpoint_path:str = path_obj.get('path')
 
             for path_param in path_params:
                 path_param_name = path_param.get('name')
                 path_param_value = path_param.get('value')
                 endpoint_path = endpoint_path.replace('{' + str(path_param_name) + '}', str(path_param_value))
-                print('PARAM data:')
-                print(path_param_name)
-                print(path_param_value)
-                print(endpoint_path)
 
+            # TODO: handle request query params
 
             tasks.append({
                 'test_name':'BOLA Path Test',
@@ -292,6 +292,5 @@ class TestGenerator:
                 'success_codes':success_codes,
                 'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER
             })
-            print('-'*20)
 
         return tasks
