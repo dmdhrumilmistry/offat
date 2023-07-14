@@ -255,19 +255,15 @@ class TestGenerator:
             # get request body params
             request_body_params = list(filter(lambda x: x.get('in') == 'body', request_params))
 
-
-
             # handle path params from path_params
             # and replace path params by value in 
             # endpoint path
+            endpoint_path:str = path_obj.get('path')
+
             path_params = path_obj.get('path_params',[])
             path_params_in_body = list(filter(lambda x: x.get('in') == 'path', request_params))
             path_params += path_params_in_body
-
             path_params = fill_params(path_params)
-            
-            
-            endpoint_path:str = path_obj.get('path')
 
             for path_param in path_params:
                 path_param_name = path_param.get('name')
@@ -286,8 +282,8 @@ class TestGenerator:
                 'args': args,
                 'kwargs': kwargs,
                 'result_details':{
-                    True:'Endpoint might be vulnerable to BOLA', # passed
-                    False:'Endpoint is not vulnerable to BOLA', # failed
+                    True:'Endpoint is not vulnerable to BOLA', # passed
+                    False:'Endpoint might be vulnerable to BOLA', # failed
                 },
                 'success_codes':success_codes,
                 'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER

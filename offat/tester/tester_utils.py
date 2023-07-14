@@ -1,5 +1,4 @@
 from asyncio import run
-from pprint import pprint as print
 from .test_generator import TestGenerator
 from .test_runner import TestRunner
 from .test_results import TestResultTable
@@ -37,5 +36,4 @@ def generate_and_run_tests(api_parser:OpenAPIParser):
     # BOLA path tests
     logger.info('Checking for BOLA in PATH:')
     bola_path_tests = test_generator.bola_path_test(api_parser, success_codes=[200, 201, 301])
-    print(bola_path_tests)
-    # run_test(bola_path_tests)
+    run_test(bola_path_tests)
