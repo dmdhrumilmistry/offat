@@ -23,6 +23,8 @@ def run_test(tests:list[dict]):
 
  
 def generate_and_run_tests(api_parser:OpenAPIParser):
+    global test_runner, test_table_generator, logger
+
     # test for unsupported http methods
     logger.info('Checking for Unsupported HTTP methods:')
     unsupported_http_endpoint_tests = test_generator.check_unsupported_http_methods(api_parser.base_url, api_parser._get_endpoints())
@@ -30,7 +32,7 @@ def generate_and_run_tests(api_parser:OpenAPIParser):
 
     # sqli fuzz test
     logger.info('Checking for SQLi vulnerability:')
-    sqli_fuzz_tests = test_generator.sqli_fuzz_params(api_parser)
+    sqli_fuzz_tests = test_generator.sqli_fuzz_params_test(api_parser)
     run_test(sqli_fuzz_tests)
    
     # BOLA path tests
