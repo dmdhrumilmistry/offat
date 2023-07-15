@@ -5,10 +5,13 @@ Automatically Tests for vulnerabilities after generating tests from openapi spec
 ![UnDocumented petstore API endpoint HTTP method results](./.images/tests/offat-test-undocumented-api-endpoint-http-method.png)
 
 ## Features
+
 - [X] Restricted HTTP Methods
 - [X] SQLi
-- [ ] BOLA
+- [X] BOLA (Might need few bug fixes)
 - [ ] Broken Authentication
+- [ ] Mass Assignment
+- [ ] Data Exposure
 
 ## Demo
 
