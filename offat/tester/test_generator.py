@@ -254,6 +254,7 @@ class TestGenerator:
 
             # get request body params
             request_body_params = list(filter(lambda x: x.get('in') == 'body', request_params))
+            
 
             # handle path params from path_params
             # and replace path params by value in 
@@ -271,6 +272,9 @@ class TestGenerator:
                 endpoint_path = endpoint_path.replace('{' + str(path_param_name) + '}', str(path_param_value))
 
             # TODO: handle request query params
+            request_query_params = list(filter(lambda x: x.get('in') == 'query', request_params))
+            # print(request_query_params)
+            # print('-'*30)
 
             tasks.append({
                 'test_name':'BOLA Path Test',
@@ -278,6 +282,7 @@ class TestGenerator:
                 'endpoint': path_obj.get('path'),
                 'method': path_obj.get('http_method').upper(),
                 'body_params':request_body_params,
+                'query_params':request_query_params,
                 'malicious_payload':path_params,
                 'args': args,
                 'kwargs': kwargs,

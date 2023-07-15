@@ -11,6 +11,11 @@ class TestRunnerFiltersEnum(Enum):
     # reserved for future use
 
 
+class PayloadFor(Enum):
+    BODY = 0
+    QUERY = 1
+
+
 class TestRunner:
     def __init__(self, rate_limit:int=None, delay:float=None, headers:dict=None) -> None:
         if rate_limit and delay:
@@ -19,10 +24,27 @@ class TestRunner:
             self._client = AsyncRequests(headers=headers)
 
 
-    def _generate_body_payload(self, body_params:list[dict]):
-        '''Generate body payload from passed data'''
-        json_payload = {}
-        for param in body_params:
+    def _generate_payloads(self, params:list[dict], payload_for:PayloadFor=PayloadFor.BODY):
+        '''Generate body payload from passed data for HTTP body and query.
+        
+        Args:
+            params (list[dict]): list of containing payload parameters
+            payload_for (PayloadFor): PayloadFor constant indicating 
+            for which payload is be generated, default: `PayloadFor.BODY`
+
+        Returns:
+            dict: dictionary containing payload as key value pairs generated from params.
+
+        Raises:
+            ValueError: If incorrect `payload_for` argument is not of `PayloadFor` class.
+        '''
+        if payload_for not in [PayloadFor.BODY, PayloadFor.QUERY]:
+            raise ValueError('`payload_for` arg only supports `PayloadFor.BODY, PayloadFor.QUERY` value')
+
+        body_payload = {}
+        query_payload = {}
+
+        for param in params:
             param_in = param.get('in')
             param_name = param.get('name')
             param_value = param.get('value')
@@ -31,11 +53,20 @@ class TestRunner:
 
             match param_in:
                 case 'body':
-                    json_payload[param_name] = param_value
+                    body_payload[param_name] = param_value
+                case 'query':
+                    query_payload[param_name] = param_value
                 case _:
                     continue
-
-        return json_payload
+        
+        match payload_for:
+            case PayloadFor.BODY:
+                return body_payload
+            
+            case PayloadFor.QUERY:
+                return query_payload
+            
+        return {}
     
 
     async def status_code_filter_request(self, test_task):
@@ -45,9 +76,14 @@ class TestRunner:
         args = test_task.get('args')
         kwargs = test_task.get('kwargs')
         body_params = test_task.get('body_params')
+        query_params = test_task.get('query_params')
 
         if body_params:
-            kwargs['json'] = self._generate_body_payload(body_params)
+            kwargs['json'] = self._generate_payloads(body_params, payload_for=PayloadFor.BODY)
+
+        if query_params:
+            kwargs['params'] = self._generate_payloads(query_params, payload_for=PayloadFor.QUERY)
+
         try:
             response = await self._client.request(url=url, method=http_method, *args, **kwargs)
         except ConnectionRefusedError:
