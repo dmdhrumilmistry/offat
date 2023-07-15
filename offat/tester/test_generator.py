@@ -77,6 +77,7 @@ class TestGenerator:
                     'url': f'{base_url}{endpoint}',
                     'endpoint': endpoint,
                     'method': restricted_method.upper(),
+                    'malicious_payload':[],
                     'args': args,
                     'kwargs': kwargs,
                     'result_details':{
