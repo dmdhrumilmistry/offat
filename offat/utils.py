@@ -1,6 +1,19 @@
 from json import loads as json_load, JSONDecodeError
 from os.path import isfile
 from yaml import safe_load, YAMLError
+from pkg_resources import get_distribution
+
+
+def get_package_version():
+    '''Returns package current version
+    
+    Args:
+        None
+
+    Returns:
+        String: current package version
+    '''
+    return get_distribution('offat').version    
 
 
 def read_yaml(file_path:str) -> dict:
