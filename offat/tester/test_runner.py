@@ -96,6 +96,10 @@ class TestRunner:
             result = True # test passed
         test_result['result'] = result
         test_result['result_details'] = test_result['result_details'].get(result)
+        
+        # append response headers and body for analyzing data leak
+        test_result['response_headers'] = response.get('res_headers')
+        test_result['response_body'] = response.get('res_body')
 
         return test_result
 

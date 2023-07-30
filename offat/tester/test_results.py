@@ -10,7 +10,7 @@ class TestResultTable:
     def generate_result_table(self, results:list, filter_passed_results:bool=True):
         return tabulate(self._sanitize_results(results, filter_passed_results), headers=self.headers, tablefmt=self.tablefmt, *self.args, **self.kwargs)
     
-    def _sanitize_results(self, results:list, filter_passed_results:bool=True):
+    def _sanitize_results(self, results:list, filter_passed_results:bool=True, is_leaking_data:bool=False):
         if filter_passed_results:
             results = list(filter(lambda x: not x.get('result'), results))
 
@@ -20,6 +20,10 @@ class TestResultTable:
                 result['result'] = u"\u2713"
             else:
                 result['result'] = u"\u00d7"
+
+            if not is_leaking_data:
+                del result['response_headers']
+                del result['response_body']
 
             del result['url']
             del result['args']
