@@ -33,9 +33,9 @@ def generate_and_run_tests(api_parser:OpenAPIParser):
     # sqli fuzz test
     logger.info('Checking for SQLi vulnerability:')
     sqli_fuzz_tests = test_generator.sqli_fuzz_params_test(api_parser)
-    # run_test(sqli_fuzz_tests)
+    run_test(sqli_fuzz_tests)
    
     # BOLA path tests
     logger.info('Checking for BOLA in PATH:')
     bola_path_tests = test_generator.bola_path_test(api_parser, success_codes=[200, 201, 301])
-    # run_test(bola_path_tests)
+    run_test(bola_path_tests)
