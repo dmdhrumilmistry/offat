@@ -108,10 +108,11 @@ class TestRunner:
         test_result['data_leak'] = data_exposures_dict
 
         if data_exposures_dict:
+            print(res_body)
             # Display the detected exposures
             for data_type, data_values in data_exposures_dict.items():
                 print(f"Detected {data_type}: {data_values}")
-            # print('--'*30)
+            print('--'*30)
         
 
         return test_result

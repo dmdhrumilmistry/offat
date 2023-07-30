@@ -25,6 +25,9 @@ class TestResultTable:
                 del result['response_headers']
                 del result['response_body']
 
+            if not result.get('data_leak'):
+                del result['data_leak']
+
             del result['url']
             del result['args']
             del result['kwargs']

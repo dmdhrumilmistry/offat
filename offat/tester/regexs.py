@@ -1,7 +1,7 @@
 sensitive_data_regex_patterns = {
     # General Data 
     'email': r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b',
-    'passwordOrToken': r'\b(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}\b', # Assuming the password contains at least 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character, and is at least 8 characters long.
+    'passwordOrToken': r'(?:^|\s|")(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&_])[A-Za-z\d@$!%*#?&_]{10,}(?:$|\s|")', # Assuming the password contains at least 1 uppercase letter, 1 lowercase letter, 1 digit, 1 special character, and is at least 8 characters long.
     'date': r'\b\d{2}/\d{2}/\d{4}\b',
     'ip': r'(?:\d{1,3}\.){3}\d{1,3}\b|\b(?:[A-Fa-f0-9]{1,4}:){7}[A-Fa-f0-9]{1,4}\b',
     'ccn': r'\b\d{4}-\d{4}-\d{4}-\d{4}\b',
