@@ -1,8 +1,8 @@
 from copy import deepcopy
-from random import randint
+from .data_exposure import detect_data_exposure
+from .fuzzer import fill_params
 from .test_runner import TestRunnerFiltersEnum
 from ..openapi import OpenAPIParser
-from .fuzzer import fill_params
 
 
 class TestGenerator:
@@ -233,7 +233,7 @@ class TestGenerator:
             **kwargs: Arbitrary keyword arguments.
         
         Returns:
-            None
+            list[dict]: list of dict containing test case for endpoint
         
         Raises:
             Any exceptions raised during the execution.
@@ -296,3 +296,5 @@ class TestGenerator:
             })
 
         return tasks
+    
+

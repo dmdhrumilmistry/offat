@@ -1,5 +1,6 @@
 from asyncio import ensure_future, gather
 from enum import Enum
+from .data_exposure import detect_data_exposure
 from ..http import AsyncRequests, AsyncRLRequests
 from ..logger import create_logger
 
@@ -96,6 +97,23 @@ class TestRunner:
             result = True # test passed
         test_result['result'] = result
         test_result['result_details'] = test_result['result_details'].get(result)
+        
+        # append response headers and body for analyzing data leak
+        res_body = response.get('res_body', 'No Response Body Found')
+        test_result['response_headers'] = response.get('res_headers')
+        test_result['response_body'] = res_body
+
+        # run data leak test
+        data_exposures_dict = detect_data_exposure(str(res_body))
+        test_result['data_leak'] = data_exposures_dict
+
+        if data_exposures_dict:
+            print(res_body)
+            # Display the detected exposures
+            for data_type, data_values in data_exposures_dict.items():
+                print(f"Detected {data_type}: {data_values}")
+            print('--'*30)
+        
 
         return test_result
 
