@@ -88,7 +88,7 @@ class OpenAPIParser:
             path_params = paths[path].get('parameters',[])
 
             for http_method in paths.get(path,{}).keys():
-                # confider only http methods
+                # consider only http methods
                 if http_method not in ['get', 'put', 'post', 'delete', 'options']:
                     continue
                 

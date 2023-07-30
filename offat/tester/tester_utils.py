@@ -18,8 +18,6 @@ def run_test(tests:list[dict]):
     '''Run tests and print result on console'''
     global test_runner, test_table_generator
     test_results = run(test_runner.run_tests(tests))
-
-    # TODO: run data leak tests before generating result table
     results = test_table_generator.generate_result_table(test_results)
     print(results)
 
@@ -35,9 +33,9 @@ def generate_and_run_tests(api_parser:OpenAPIParser):
     # sqli fuzz test
     logger.info('Checking for SQLi vulnerability:')
     sqli_fuzz_tests = test_generator.sqli_fuzz_params_test(api_parser)
-    run_test(sqli_fuzz_tests)
+    # run_test(sqli_fuzz_tests)
    
     # BOLA path tests
     logger.info('Checking for BOLA in PATH:')
     bola_path_tests = test_generator.bola_path_test(api_parser, success_codes=[200, 201, 301])
-    run_test(bola_path_tests)
+    # run_test(bola_path_tests)

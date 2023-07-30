@@ -2,7 +2,6 @@ from re import findall
 from .regexs import sensitive_data_regex_patterns
 
 
-
 def detect_data_exposure(data:str)->dict:
     '''Detects data exposure against sensitive data regex 
     patterns and returns dict of matched results  

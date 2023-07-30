@@ -12,7 +12,7 @@ class TestResultTable:
     
     def _sanitize_results(self, results:list, filter_passed_results:bool=True, is_leaking_data:bool=False):
         if filter_passed_results:
-            results = list(filter(lambda x: not x.get('result'), results))
+            results = list(filter(lambda x: not x.get('result') or x.get('data_leak'), results))
 
         # remove args, kwargs and other unrequired keys for results
         for result in results:
