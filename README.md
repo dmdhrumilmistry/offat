@@ -9,9 +9,9 @@ Automatically Tests for vulnerabilities after generating tests from openapi spec
 - [X] Restricted HTTP Methods
 - [X] SQLi
 - [X] BOLA (Might need few bug fixes)
+- [X] Data Exposure (Detects Common Data Exposures)
 - [ ] Broken Authentication
 - [ ] Mass Assignment
-- [ ] Data Exposure
 
 ## Demo
 
