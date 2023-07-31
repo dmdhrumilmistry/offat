@@ -1,5 +1,4 @@
 from copy import deepcopy
-from .data_exposure import detect_data_exposure
 from .fuzzer import fill_params
 from .test_runner import TestRunnerFiltersEnum
 from ..openapi import OpenAPIParser
