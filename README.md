@@ -86,16 +86,22 @@ The disclaimer advises users to use the open-source project for ethical and legi
 
 ## Start OffAT
 
-- run offat
+- Run offat
 
   ```bash
-  python3 -m offat
+  offat -f swagger_file.json
   ```
 
-- to get all the commands use `help`
+- To get all the commands use `help`
 
   ```bash
-  python3 -m offat -h
+  offat -h
+  ```
+
+- Run tests only for endpoint paths matching regex pattern
+
+  ```bash
+  offat -f swagger_file.json -pr '/user'
   ```
 
 > If you're using Termux or windows, then use `pip` instead of `pip3`.  
