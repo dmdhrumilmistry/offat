@@ -1,7 +1,11 @@
-from json import loads as json_load, JSONDecodeError
-from os.path import isfile
-from yaml import safe_load, YAMLError
+from json import loads as json_load, dumps as json_dumps, JSONDecodeError
 from pkg_resources import get_distribution
+from yaml import safe_load, YAMLError
+from os.path import isfile
+from .logger import create_logger
+
+
+logger = create_logger(__name__)
 
 
 def get_package_version():
@@ -77,3 +81,36 @@ def read_openapi_file(file_path:str) -> dict:
             return read_yaml(file_path)
         case _:
             return {"error":"Invalid file extension"}
+
+
+def write_json_to_file(json_data:dict, file_path:str):
+    '''Writes dict obj to file as json
+
+    Args:
+        json_data (dict): JSON payload to be written into file
+        file_path (str): path of output json file
+
+    Returns:
+        bool: True is `json_data` is written into `file_path` else
+        returns False (in case of any exception) 
+
+    Raises:
+        Any exception occurred during operation
+    '''
+    if isfile(file_path):
+       logger.info(f'{file_path} file will be overwritten.')
+
+    logger.info(f'Writing data to file: {file_path}')
+    try:
+        with open(file_path, 'w') as f:
+            f.write(json_dumps(json_data))
+            logger.info(f'Completed writing data to file: {file_path}')
+            return True
+
+    except JSONDecodeError:
+        logger.error(f'Invalid JSON data, error while writing to {file_path} file.')
+
+    except Exception as e:
+        logger.error(repr(e))
+
+    return False

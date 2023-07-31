@@ -85,7 +85,7 @@ class TestGenerator:
                     },
                     'body_params':[],
                     'success_codes':success_codes,
-                    'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER
+                    'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER.name
                 })
 
         return tasks
@@ -210,7 +210,7 @@ class TestGenerator:
                         False:'One or more parameter is vulnerable to SQL Injection Attack', # failed
                     },
                     'success_codes':success_codes,
-                    'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER
+                    'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER.name
                 })
 
         return tasks
@@ -291,7 +291,7 @@ class TestGenerator:
                     False:'Endpoint might be vulnerable to BOLA', # failed
                 },
                 'success_codes':success_codes,
-                'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER
+                'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER.name
             })
 
         return tasks

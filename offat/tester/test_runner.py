@@ -102,6 +102,7 @@ class TestRunner:
         res_body = response.get('res_body', 'No Response Body Found')
         test_result['response_headers'] = response.get('res_headers')
         test_result['response_body'] = res_body
+        test_result['response_status_code'] = response.get('status')
 
         # run data leak test
         data_exposures_dict = detect_data_exposure(str(res_body))
