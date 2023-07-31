@@ -33,7 +33,7 @@ def run_test(tests:list[dict], regex_pattern:str=None):
     print(results)
 
  
-def generate_and_run_tests(api_parser:OpenAPIParser, regex_pattern:str=r'/user'):
+def generate_and_run_tests(api_parser:OpenAPIParser, regex_pattern:str=None):
     global test_runner, test_table_generator, logger
 
     # test for unsupported http methods
