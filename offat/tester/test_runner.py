@@ -97,12 +97,16 @@ class TestRunner:
             result = True # test passed
         test_result['result'] = result
         test_result['result_details'] = test_result['result_details'].get(result)
+
+        # add request headers to result
+        test_result['request_headers'] = response.get('req_headers',[])
         
         # append response headers and body for analyzing data leak
         res_body = response.get('res_body', 'No Response Body Found')
         test_result['response_headers'] = response.get('res_headers')
         test_result['response_body'] = res_body
         test_result['response_status_code'] = response.get('status')
+        test_result['redirection'] = response.get('res_redirection', '')
 
         # run data leak test
         data_exposures_dict = detect_data_exposure(str(res_body))
