@@ -104,6 +104,22 @@ The disclaimer advises users to use the open-source project for ethical and legi
   offat -f swagger_file.json -pr '/user'
   ```
 
+- Add headers to requests
+
+  ```bash
+  offat -f swagger_file.json -H 'Accept: application/json,Authorization: Bearer YourJWTToken'
+  ```
+
+- Run Test with Requests Rate Limited
+
+  ```bash
+  offat -f swagger_file.json -rl 1000 -dr 0.001
+  ```
+
+  > `rl`: requests rate limit, `dr`: delay between requests
+
+
+
 > If you're using Termux or windows, then use `pip` instead of `pip3`.  
 > Few features are only for linux os, hence they might not work on windows and require admin priviliges.
 
