@@ -36,5 +36,7 @@ class TestResultTable:
             del result['success_codes']
             del result['body_params']
             del result['malicious_payload']
+            del result['request_headers']
+            del result['redirection']
             
         return results

@@ -114,3 +114,29 @@ def write_json_to_file(json_data:dict, file_path:str):
         logger.error(repr(e))
 
     return False
+
+
+def str_to_dict(key_values:str) -> dict:
+    '''Takes string object and converts to dict 
+    String should in `Key1:Value1,Key2:Value2,Key3:Value3` format
+    
+    Args:
+        key_values (str): dict as str separated by commas `,`
+
+    Returns:
+        dict: Returns dict from str after conversion
+
+    Raises:
+        Any exception occurred during operation
+    '''
+    new_dict = dict()
+    for key_value in key_values.split(','):
+        try:
+            key_value_list = key_value.split(':')
+            key = key_value_list[0].strip()
+            value = key_value_list[1].strip()
+            new_dict[key] = value
+        except (IndexError, KeyError) as e:
+            logger.error(str(e))
+
+    return new_dict
