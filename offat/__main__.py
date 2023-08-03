@@ -29,8 +29,6 @@ def start():
         rate_limit = None
         delay_rate = None
 
-    print(rate_limit, delay_rate)
-
     # parse args and run tests
     api_parser = OpenAPIParser(args.fpath)
     generate_and_run_tests(
