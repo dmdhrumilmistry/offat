@@ -107,7 +107,7 @@ The disclaimer advises users to use the open-source project for ethical and legi
 - Add headers to requests
 
   ```bash
-  offat -f swagger_file.json -H 'Accept: application/json,Authorization: Bearer YourJWTToken'
+  offat -f swagger_file.json -H 'Accept: application/json' -H 'Authorization: Bearer YourJWTToken'
   ```
 
 - Run Test with Requests Rate Limited
