@@ -140,3 +140,30 @@ def str_to_dict(key_values:str) -> dict:
             logger.error(str(e))
 
     return new_dict
+
+
+def headers_list_to_dict(headers_list_list:list[list[str]]) -> dict:
+    '''Takes list object and converts to dict 
+    String should in `[['Key1:Value1'],['Key2:Value2'],['Key3:Value3']]` format
+    
+    Args:
+        headers_list_list (list): headers value as list[list[str]], where str 
+        is in `key:value` format
+
+    Returns:
+        dict: Returns dict from str after conversion
+
+    Raises:
+        Any exception occurred during operation
+    '''
+
+    response_headers_dict:dict = dict()
+
+    for header_list in headers_list_list:
+        for header_data in header_list:
+            header_key_value = header_data.split(':')
+            k = header_key_value[0].strip()
+            v = header_key_value[1].strip()
+            response_headers_dict[k] = v
+
+    return response_headers_dict
