@@ -194,3 +194,4 @@ specs.yaml
 specs.json
 swagger.yaml
 swagger.json
+*.json
