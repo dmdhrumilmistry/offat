@@ -142,7 +142,7 @@ def str_to_dict(key_values:str) -> dict:
     return new_dict
 
 
-def headers_list_to_dict(headers_list_list:list[list[str]]) -> dict:
+def headers_list_to_dict(headers_list_list:list[list[str]]) -> dict|None:
     '''Takes list object and converts to dict 
     String should in `[['Key1:Value1'],['Key2:Value2'],['Key3:Value3']]` format
     
@@ -156,6 +156,8 @@ def headers_list_to_dict(headers_list_list:list[list[str]]) -> dict:
     Raises:
         Any exception occurred during operation
     '''
+    if not headers_list_list:
+        return None
 
     response_headers_dict:dict = dict()
 
