@@ -79,7 +79,7 @@ class TestRunner:
         body_params = test_task.get('body_params')
         query_params = test_task.get('query_params')
 
-        if body_params:
+        if body_params and str(http_method).upper() not in ['GET', 'OPTIONS']:
             kwargs['json'] = self._generate_payloads(body_params, payload_for=PayloadFor.BODY)
 
         if query_params:
