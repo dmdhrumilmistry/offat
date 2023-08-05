@@ -216,7 +216,7 @@ class TestGenerator:
         return tasks
     
 
-    def bola_path_test(
+    def bola_fuzz_path_test(
             self,
             openapi_parser:OpenAPIParser,
             success_codes:list[int]=[200, 201, 301],

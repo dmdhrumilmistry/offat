@@ -57,9 +57,9 @@ def generate_and_run_tests(api_parser:OpenAPIParser, regex_pattern:str=None, out
     results += run_test(test_runner=test_runner, tests=sqli_fuzz_tests, regex_pattern=regex_pattern)
    
     # BOLA path tests
-    logger.info('Checking for BOLA in PATH:')
-    bola_path_tests = test_generator.bola_path_test(api_parser, success_codes=[200, 201, 301])
-    results += run_test(test_runner=test_runner, tests=bola_path_tests, regex_pattern=regex_pattern)
+    logger.info('Checking for BOLA in PATH using fuzzed params:')
+    bola_fuzzed_path_tests = test_generator.bola_fuzz_path_test(api_parser, success_codes=[200, 201, 301])
+    results += run_test(test_runner=test_runner, tests=bola_fuzzed_path_tests, regex_pattern=regex_pattern)
 
     if output_file:
         write_json_to_file(
