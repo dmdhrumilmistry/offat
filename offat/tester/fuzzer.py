@@ -1,7 +1,7 @@
 import random
 import string
 
-def generate_random_int(max_value:int=1000):
+def generate_random_int(max_value:int=100):
     '''Generate Random Integer value between specified maximum value
     note: maximum_value is not consider in range'''
     return random.randint(0,max_value)
