@@ -1,6 +1,5 @@
 from asyncio import run
 from copy import deepcopy
-from pprint import pprint
 from re import search as regex_search
 from .test_generator import TestGenerator
 from .test_runner import TestRunner
