@@ -254,6 +254,8 @@ class TestGenerator:
 
             # get request body params
             request_body_params = list(filter(lambda x: x.get('in') == 'body', request_params))
+            print(request_body_params)
+            print('-'*30)
             
 
             # handle path params from path_params

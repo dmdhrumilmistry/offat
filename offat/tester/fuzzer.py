@@ -27,15 +27,20 @@ def fill_schema_params(params:dict[dict], param_in:str=None,is_required:bool=Non
     schema_params = []
     for var_name,var_data in params.items():
         var_type = var_data.get('type')
+        var_name_lower = str(var_name).lower()
 
         match var_type:
             case 'string':
-                if 'email' in var_name:
+                if 'email' in var_name_lower:
                     var_value = generate_random_char_digits(6) + '@example.com'
-                elif 'password' in var_name:
+                elif 'password' in var_name_lower:
                     var_value = generate_random_string(15)
-                elif 'phone' in var_name:
+                elif 'phone' in var_name_lower:
                     var_value = generate_phone_number()
+                elif 'name' in var_name_lower:
+                    var_value = generate_random_chars(7)
+                elif 'username' in var_name_lower:
+                    var_value = generate_random_char_digits(6)
                 else:
                     var_value = generate_random_string(10)
             

@@ -49,17 +49,17 @@ def generate_and_run_tests(api_parser:OpenAPIParser, regex_pattern:str=None, out
     # test for unsupported http methods
     logger.info('Checking for Unsupported HTTP methods:')
     unsupported_http_endpoint_tests = test_generator.check_unsupported_http_methods(api_parser.base_url, api_parser._get_endpoints())
-    results += run_test(test_runner=test_runner, tests=unsupported_http_endpoint_tests, regex_pattern=regex_pattern)
+    # results += run_test(test_runner=test_runner, tests=unsupported_http_endpoint_tests, regex_pattern=regex_pattern)
 
     # sqli fuzz test
     logger.info('Checking for SQLi vulnerability:')
     sqli_fuzz_tests = test_generator.sqli_fuzz_params_test(api_parser)
-    results += run_test(test_runner=test_runner, tests=sqli_fuzz_tests, regex_pattern=regex_pattern)
+    # results += run_test(test_runner=test_runner, tests=sqli_fuzz_tests, regex_pattern=regex_pattern)
    
     # BOLA path tests
     logger.info('Checking for BOLA in PATH using fuzzed params:')
     bola_fuzzed_path_tests = test_generator.bola_fuzz_path_test(api_parser, success_codes=[200, 201, 301])
-    results += run_test(test_runner=test_runner, tests=bola_fuzzed_path_tests, regex_pattern=regex_pattern)
+    # results += run_test(test_runner=test_runner, tests=bola_fuzzed_path_tests, regex_pattern=regex_pattern)
 
     if output_file:
         write_json_to_file(
