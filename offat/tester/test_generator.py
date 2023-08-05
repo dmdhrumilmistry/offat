@@ -151,7 +151,7 @@ class TestGenerator:
     def sqli_fuzz_params_test(
             self,
             openapi_parser:OpenAPIParser,
-            success_codes:list[int]=[403,405,500],
+            success_codes:list[int]=[500],
             *args,
             **kwargs
     ):
