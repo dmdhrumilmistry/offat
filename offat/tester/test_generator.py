@@ -254,8 +254,6 @@ class TestGenerator:
 
             # get request body params
             request_body_params = list(filter(lambda x: x.get('in') == 'body', request_params))
-            print(request_body_params)
-            print('-'*30)
             
 
             # handle path params from path_params
@@ -275,8 +273,8 @@ class TestGenerator:
 
             # TODO: handle request query params
             request_query_params = list(filter(lambda x: x.get('in') == 'query', request_params))
-            # print(request_query_params)
-            # print('-'*30)
+            print(request_query_params)
+            print('-'*30)
 
             tasks.append({
                 'test_name':'BOLA Path Test',
