@@ -1,6 +1,12 @@
 import random
 import string
 
+def generate_random_int(max_value:int=100):
+    '''Generate Random Integer value between specified maximum value
+    note: maximum_value is not consider in range'''
+    return random.randint(0,max_value)
+
+
 def generate_phone_number():
     '''Generate Random 10 digit phone number starting with 72'''
     return '72'+''.join(random.choice(string.digits) for _ in range(8))
@@ -50,7 +56,7 @@ def fill_schema_params(params:dict[dict], param_in:str=None,is_required:bool=Non
                 var_value = fuzz_string_type(var_name)
             
             case 'integer':
-                var_value = random.randint(0,1000)
+                var_value = generate_random_int()
             
             case _:
                 var_value = generate_random_string(10)
@@ -83,7 +89,7 @@ def fill_params(params:list[dict]):
                 param_value = fuzz_string_type(param_name)
 
             case 'integer':
-                param_value = random.randint(0,1000)
+                param_value = generate_random_int()
             
             # TODO: handle file type
             
