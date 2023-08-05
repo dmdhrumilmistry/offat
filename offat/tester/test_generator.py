@@ -189,6 +189,9 @@ class TestGenerator:
         # NOTE: skip paths containing in path variables and no body params for now!!.
         request_response_params = list(filter(lambda x: len(x.get('path_params',[]))==0 and len(x.get('request_params',[]))>0, request_response_params))
 
+        print(request_response_params)
+        exit()
+
         # inject SQLi payloads in string variables
         for sqli_payload in basic_sqli_payloads:
             for request_obj in request_response_params:
