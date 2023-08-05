@@ -168,8 +168,7 @@ class TestGenerator:
                 'method': path_obj.get('http_method').upper(),
                 'body_params':request_body_params,
                 'query_params':request_query_params,
-                # 'malicious_payload':path_params,
-                
+                # 'malicious_payload':path_params,  
             })
 
         return tasks
@@ -414,6 +413,7 @@ class TestGenerator:
                 'body_params':request_body_params,
                 'query_params':request_query_params,
                 'path_params':path_params,
+                'malicious_payload':[],
                 'args': args,
                 'kwargs': kwargs,
                 'result_details':{
