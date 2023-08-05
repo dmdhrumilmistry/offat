@@ -22,27 +22,32 @@ def generate_random_string(length):
     characters = string.ascii_letters + string.digits + string.punctuation
     return ''.join(random.choice(characters) for _ in range(length))
 
+def fuzz_string_type(var_name:str):
+    var_name_lower = str(var_name).lower()
+    if 'email' in var_name_lower:
+        var_value = generate_random_char_digits(6).lower() + '@example.com'
+    elif 'password' in var_name_lower:
+        var_value = generate_random_string(15)
+    elif 'phone' in var_name_lower:
+        var_value = generate_phone_number()
+    elif 'name' in var_name_lower:
+        var_value = generate_random_chars(7)
+    elif 'username' in var_name_lower:
+        var_value = generate_random_char_digits(6)
+    else:
+        var_value = generate_random_string(10)
+
+    return var_value
+
 
 def fill_schema_params(params:dict[dict], param_in:str=None,is_required:bool=None):
     schema_params = []
     for var_name,var_data in params.items():
         var_type = var_data.get('type')
-        var_name_lower = str(var_name).lower()
 
         match var_type:
             case 'string':
-                if 'email' in var_name_lower:
-                    var_value = generate_random_char_digits(6) + '@example.com'
-                elif 'password' in var_name_lower:
-                    var_value = generate_random_string(15)
-                elif 'phone' in var_name_lower:
-                    var_value = generate_phone_number()
-                elif 'name' in var_name_lower:
-                    var_value = generate_random_chars(7)
-                elif 'username' in var_name_lower:
-                    var_value = generate_random_char_digits(6)
-                else:
-                    var_value = generate_random_string(10)
+                var_value = fuzz_string_type(var_name)
             
             case 'integer':
                 var_value = random.randint(0,1000)
@@ -70,10 +75,12 @@ def fill_params(params:list[dict]):
         param_type = params[index].get('type')
         param_is_required = params[index].get('required')
         param_in = params[index].get('in')
+        param_name = params[index].get('name','')
 
         match param_type:
             case 'string':
-                param_value = generate_random_chars(10)
+                # param_value = generate_random_chars(10)
+                param_value = fuzz_string_type(param_name)
 
             case 'integer':
                 param_value = random.randint(0,1000)
