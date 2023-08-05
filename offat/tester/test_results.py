@@ -1,5 +1,6 @@
 from tabulate import tabulate
 
+
 class TestResultTable:
     def __init__(self, tablefmt:str='heavy_outline', headers:str='keys',*args, **kwargs) -> None:
         self.tablefmt = tablefmt
@@ -13,8 +14,8 @@ class TestResultTable:
     def _sanitize_results(self, results:list, filter_passed_results:bool=True, is_leaking_data:bool=False):
         if filter_passed_results:
             results = list(filter(lambda x: not x.get('result') or x.get('data_leak'), results))
-
-        # remove args, kwargs and other unrequired keys for results
+        
+        # remove keys based on conditions or update their values
         for result in results:
             if result['result']:
                 result['result'] = u"\u2713"
@@ -25,8 +26,20 @@ class TestResultTable:
                 del result['response_headers']
                 del result['response_body']
 
-            if not result.get('data_leak'):
-                del result['data_leak']
+            if result.get('response_status_code'):
+                result['status_code'] = result.get('response_status_code')
+                del result['response_status_code']
+
+            if result.get('data_leak'):
+                result['data_leak'] = u"\u2713"
+            else:
+                result['data_leak'] = u"\u00d7"
+
+            if result.get('query_params'):
+                del result['query_params']
+
+            if not isinstance(result.get('malicious_payload'), str):
+                del result['malicious_payload']
 
             del result['url']
             del result['args']
@@ -35,7 +48,6 @@ class TestResultTable:
             del result['response_filter']
             del result['success_codes']
             del result['body_params']
-            del result['malicious_payload']
             del result['request_headers']
             del result['redirection']
             
