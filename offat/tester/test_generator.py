@@ -216,7 +216,7 @@ class TestGenerator:
         return tasks
     
 
-    def bola_path_test(
+    def bola_fuzz_path_test(
             self,
             openapi_parser:OpenAPIParser,
             success_codes:list[int]=[200, 201, 301],
@@ -265,6 +265,9 @@ class TestGenerator:
             path_params_in_body = list(filter(lambda x: x.get('in') == 'path', request_params))
             path_params += path_params_in_body
             path_params = fill_params(path_params)
+            # print(path_params)
+            # print('-'*30)
+
 
             for path_param in path_params:
                 path_param_name = path_param.get('name')
