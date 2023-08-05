@@ -1,6 +1,7 @@
 from copy import deepcopy
 from .fuzzer import fill_params
 from .test_runner import TestRunnerFiltersEnum
+from .fuzzer import generate_random_int
 from ..openapi import OpenAPIParser
 
 
@@ -280,7 +281,7 @@ class TestGenerator:
             # print('-'*30)
 
             tasks.append({
-                'test_name':'BOLA Path Test',
+                'test_name':'BOLA Path Test with Fuzzed Params',
                 'url': f'{base_url}{endpoint_path}',
                 'endpoint': path_obj.get('path'),
                 'method': path_obj.get('http_method').upper(),
@@ -300,3 +301,82 @@ class TestGenerator:
         return tasks
     
 
+    def bola_fuzz_trailing_slash_path_test(
+            self,
+            openapi_parser:OpenAPIParser,
+            success_codes:list[int]=[200, 201, 301],
+            *args,
+            **kwargs
+    ):
+        '''Generate Tests for BOLA in endpoint path
+        
+        Args:
+            openapi_parser (OpenAPIParser): An instance of the OpenAPIParser class containing the parsed OpenAPI specification.
+            success_codes (list[int], optional): A list of HTTP success codes to consider as successful BOLA responses. Defaults to [200, 201, 301].
+            *args: Variable-length positional arguments.
+            **kwargs: Arbitrary keyword arguments.
+        
+        Returns:
+            list[dict]: list of dict containing test case for endpoint
+        
+        Raises:
+            Any exceptions raised during the execution.
+        '''
+        base_url:str = openapi_parser.base_url
+        request_response_params:list[dict] = openapi_parser.request_response_params
+
+        tasks = []
+        for path_obj in request_response_params:
+            # handle path params from request_params
+            request_params = path_obj.get('request_params',[])
+            request_params = fill_params(request_params)
+
+            # get params based on their position in request
+            request_body_params = list(filter(lambda x: x.get('in') == 'body', request_params))
+            request_query_params = list(filter(lambda x: x.get('in') == 'query', request_params))
+            path_params_in_body = list(filter(lambda x: x.get('in') == 'path', request_params))
+            
+
+            # handle path params from path_params
+            # and replace path params by value in 
+            # endpoint path
+            endpoint_path:str = path_obj.get('path')
+            path_params = path_obj.get('path_params',[])
+            path_params += path_params_in_body
+            path_params = fill_params(path_params)
+            # print(path_params)
+            # print('-'*30)
+
+
+            for path_param in path_params:
+                path_param_name = path_param.get('name')
+                path_param_value = path_param.get('value')
+                endpoint_path = endpoint_path.replace('{' + str(path_param_name) + '}', str(path_param_value))
+
+            # generate URL for BOLA attack
+            url = f'{base_url}{endpoint_path}'
+            if url.endswith('/'):
+                url = f'{url}{generate_random_int()}'
+            else:
+                url = f'{url}/{generate_random_int()}'
+            
+
+            tasks.append({
+                'test_name':'BOLA Path Trailing Slash Test',
+                'url': url,
+                'endpoint': path_obj.get('path'),
+                'method': path_obj.get('http_method').upper(),
+                'body_params':request_body_params,
+                'query_params':request_query_params,
+                'path_params':path_params,
+                'args': args,
+                'kwargs': kwargs,
+                'result_details':{
+                    True:'Endpoint might not vulnerable to BOLA', # passed
+                    False:'Endpoint might be vulnerable to BOLA', # failed
+                },
+                'success_codes':success_codes,
+                'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER.name
+            })
+
+        return tasks
