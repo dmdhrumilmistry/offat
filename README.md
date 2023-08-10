@@ -10,8 +10,8 @@ Automatically Tests for vulnerabilities after generating tests from openapi spec
 - [X] SQLi
 - [X] BOLA (Might need few bug fixes)
 - [X] Data Exposure (Detects Common Data Exposures)
+- [X] BOPLA / Mass Assignment
 - [ ] Broken Authentication
-- [ ] Mass Assignment
 
 ## Demo
 
