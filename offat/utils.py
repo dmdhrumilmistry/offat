@@ -34,10 +34,10 @@ def read_yaml(file_path:str) -> dict:
         return {"error":"File Not Found"}
     
     with open(file_path) as f:
-        try:
-            return safe_load(f.read())
-        except YAMLError:
-            return {"error": "YAML error"}
+        # try:
+        return safe_load(f.read())
+        # except YAMLError:
+            # return {"error": "YAML error"}
         
 
 def read_json(file_path:str) -> dict:
