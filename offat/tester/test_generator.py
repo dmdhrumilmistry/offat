@@ -86,6 +86,8 @@ class TestGenerator:
                         False: 'Endpoint performs HTTP method which is not documented', # failed
                     },
                     'body_params':[],
+                    'query_params':[],
+                    'path_params':[],
                     'success_codes':success_codes,
                     'response_filter': TestRunnerFiltersEnum.STATUS_CODE_FILTER.name
                 })
@@ -169,6 +171,7 @@ class TestGenerator:
                 'method': path_obj.get('http_method').upper(),
                 'body_params':request_body_params,
                 'query_params':request_query_params,
+                'path_params':path_params,
                 # 'malicious_payload':path_params,  
             })
 
@@ -332,6 +335,7 @@ class TestGenerator:
                 'method': path_obj.get('http_method').upper(),
                 'body_params':request_body_params,
                 'query_params':request_query_params,
+                'path_params':path_params,
                 'malicious_payload':path_params,
                 'args': args,
                 'kwargs': kwargs,

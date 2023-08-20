@@ -8,6 +8,7 @@ class TestResultTable:
         self.args = args
         self.kwargs = kwargs
 
+
     def generate_result_table(self, results:list, filter_passed_results:bool=True):
         return tabulate(self._sanitize_results(results, filter_passed_results), headers=self.headers, tablefmt=self.tablefmt, *self.args, **self.kwargs)
     
@@ -36,9 +37,6 @@ class TestResultTable:
             else:
                 result['data_leak'] = u"\u00d7"
 
-            if result.get('query_params'):
-                del result['query_params']
-
             if not isinstance(result.get('malicious_payload'), str):
                 del result['malicious_payload']
 
@@ -51,5 +49,7 @@ class TestResultTable:
             del result['body_params']
             del result['request_headers']
             del result['redirection']
+            del result['query_params']
+            del result['path_params']
             
         return results
