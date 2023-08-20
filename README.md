@@ -25,7 +25,7 @@ Automatically Tests for vulnerabilities after generating tests from openapi spec
 |:----:|:---:|
 |Weekly|[![Downloads](https://static.pepy.tech/personalized-badge/offat?period=week&units=international_system&left_color=black&right_color=orange&left_text=Downloads)](https://pepy.tech/project/offat)|
 |Monthy|[![Downloads](https://static.pepy.tech/personalized-badge/offat?period=month&units=international_system&left_color=black&right_color=orange&left_text=Downloads)](https://pepy.tech/project/offat)|
-|Total|[![Downloads](https://static.pepy.tech/personalized-badge/offat?period=totalPu&units=international_system&left_color=black&right_color=orange&left_text=Downloads)](https://pepy.tech/project/offat)|
+|Total|[![Downloads](https://static.pepy.tech/personalized-badge/offat?period=total&units=international_system&left_color=black&right_color=orange&left_text=Downloads)](https://pepy.tech/project/offat)|
 
 ## Disclaimer
 
@@ -118,7 +118,74 @@ The disclaimer advises users to use the open-source project for ethical and legi
 
   > `rl`: requests rate limit, `dr`: delay between requests
 
+- Use user provided inputs for generating tests
 
+  ```bash
+  offat -f swagger_file.json -tdc test_data_config.yaml
+  ```
+
+  `test_data_config.yaml`
+  
+  ```yaml
+  actors:
+  - actor1:
+      request_headers:
+        - name: Authorization
+          value: Bearer [Token1]
+        - name: User-Agent
+          value: offat-actor1
+
+      query:
+        - name: id
+          value: 145
+          type: int
+        - name: country
+          value: uk
+          type: str
+        - name: city
+          value: london
+          type: str
+
+      body:
+        - name: name
+          value: actorone
+          type: str
+        - name: email
+          value: actorone@example.com
+          type: str
+        - name: phone
+          value: +11233211230
+          type: str
+
+  - actor2:
+      request_headers:
+        - name: Authorization
+          value: Bearer [Token2]
+        - name: User-Agent
+          value: offat-actor2
+
+      query:
+        - name: id
+          value: 199
+          type: int
+        - name: country
+          value: uk
+          type: str
+        - name: city
+          value: leeds
+          type: str
+
+      body:
+        - name: name
+          value: actortwo
+          type: str
+        - name: email
+          value: actortwo@example.com
+          type: str
+        - name: phone
+          value: +41912312311
+          type: str
+  ```
 
 > If you're using Termux or windows, then use `pip` instead of `pip3`.  
 > Few features are only for linux os, hence they might not work on windows and require admin priviliges.
