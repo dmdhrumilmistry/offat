@@ -1,3 +1,5 @@
+from copy import deepcopy
+from pprint import pprint
 from .logger import create_logger
 
 
@@ -23,3 +25,28 @@ def validate_config_file_data(test_config_data:dict):
     
     logger.info('User provided data will be used for generating test cases')
     return test_config_data
+
+
+def populate_user_data(user_data, tests:list[dict]):
+    tests = deepcopy(tests)
+    headers = user_data.get('request_headers',[])
+    body_params = user_data.get('body',[])
+    query_params = user_data.get('query',[])
+    path_params = user_data.get('path',[])
+
+    # create HTTP request headers
+    request_headers = {}
+    for header in headers:
+        request_headers[header.get('name')] = header.get('value')
+
+    for test in tests:
+        # TODO: replace key and value instead of appending
+        test['body_params'] += body_params
+        test['query_params'] += query_params
+        test['path_params'] += path_params
+        if test.get('kwargs',{}).get('headers',{}).items():
+            test['kwargs']['headers'] = dict(test['kwargs']['headers'], **request_headers)
+        else:
+            test['kwargs']['headers'] = request_headers
+
+    return tests
