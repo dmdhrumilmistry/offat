@@ -1,9 +1,9 @@
 from copy import deepcopy
-from pprint import pprint
 from .fuzzer import fill_params
 from .test_runner import TestRunnerFiltersEnum
 from .fuzzer import generate_random_int
 from ..openapi import OpenAPIParser
+from ..config_data_handler import populate_user_data
 
 
 class TestGenerator:
@@ -538,3 +538,44 @@ class TestGenerator:
             })
 
         return tasks
+    
+    def test_with_user_data(
+        self,
+        user_data:dict,
+        test_generator_method,
+        test_for_actor1:bool=True,
+        test_for_actor2:bool=False,
+        *args,
+        **kwargs
+    ):
+        '''Generate Tests with user sepecified data using provided test generator method
+        
+        Args:
+            user_data (dict): User specified YAML data as dict.
+            test_generator_method (class method): test generator class method to be used for generating API pentest tests. 
+            test_for_actor1 (bool): Generate tests for actor1 user data
+            test_for_actor2 (bool): Generate tests for actor2 user data
+            *args: Variable-length positional arguments.
+            **kwargs: Arbitrary keyword arguments.
+        
+        Returns:
+            list[dict]: list of dict containing test case for endpoint
+        
+        Raises:
+            Any exceptions raised during the execution.
+        '''
+        # generate tests using test generator method
+        tests = test_generator_method(*args, **kwargs)
+        new_tests = []
+
+        # pprint(user_data)
+        actor1_data = user_data.get('actors',[])[0].get('actor1',{})
+        actor2_data = user_data.get('actors',[])[1].get('actor2',{})
+
+        if test_for_actor1:
+            new_tests += populate_user_data(actor1_data, tests)
+
+        if test_for_actor2:
+            new_tests += populate_user_data(actor2_data, tests)
+
+        return new_tests
