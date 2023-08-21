@@ -30,6 +30,9 @@ def read_yaml(file_path:str) -> dict:
     Returns:
         dict: YAML contents as dict else returns error 
     '''
+    if not file_path:
+        return {"error":"ValueError, path cannot be of None type"}
+
     if not isfile(file_path):
         return {"error":"File Not Found"}
     
