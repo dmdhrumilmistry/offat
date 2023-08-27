@@ -27,12 +27,12 @@ def validate_config_file_data(test_config_data:dict):
     return test_config_data
 
 
-def populate_user_data(user_data, tests:list[dict]):
+def populate_user_data(actor_data:dict, actor_name:str,tests:list[dict]):
     tests = deepcopy(tests)
-    headers = user_data.get('request_headers',[])
-    body_params = user_data.get('body',[])
-    query_params = user_data.get('query',[])
-    path_params = user_data.get('path',[])
+    headers = actor_data.get('request_headers',[])
+    body_params = actor_data.get('body',[])
+    query_params = actor_data.get('query',[])
+    path_params = actor_data.get('path',[])
 
     # create HTTP request headers
     request_headers = {}
@@ -44,6 +44,7 @@ def populate_user_data(user_data, tests:list[dict]):
         test['body_params'] += body_params
         test['query_params'] += query_params
         test['path_params'] += path_params
+        test['test_actor_name'] = actor_name # for post test processing tests such as broken authentication
         if test.get('kwargs',{}).get('headers',{}).items():
             test['kwargs']['headers'] = dict(test['kwargs']['headers'], **request_headers)
         else:

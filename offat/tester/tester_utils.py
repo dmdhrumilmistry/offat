@@ -1,6 +1,8 @@
 from asyncio import run
 from copy import deepcopy
 from re import search as regex_search
+
+from .post_test_processor import PostRunTests
 from .test_generator import TestGenerator
 from .test_runner import TestRunner
 from .test_results import TestResultTable
@@ -16,7 +18,7 @@ test_table_generator = TestResultTable()
 test_generator = TestGenerator()
 
 
-def run_test(test_runner:TestRunner, tests:list[dict], regex_pattern:str=None) -> list:
+def run_test(test_runner:TestRunner, tests:list[dict], regex_pattern:str=None, skip_test_run:bool=False) -> list:
     '''Run tests and print result on console'''
     global test_table_generator
 
@@ -29,7 +31,10 @@ def run_test(test_runner:TestRunner, tests:list[dict], regex_pattern:str=None) -
             ) 
         )
 
-    test_results = run(test_runner.run_tests(tests))
+    if skip_test_run:
+        test_results = tests
+    else:
+        test_results = run(test_runner.run_tests(tests))
     results = test_table_generator.generate_result_table(deepcopy(test_results))
     print(results)
     return test_results
@@ -95,6 +100,11 @@ def generate_and_run_tests(api_parser:OpenAPIParser, regex_pattern:str=None, out
             success_codes=[200, 201, 301],
         )
         results += run_test(test_runner=test_runner, tests=bola_trailing_slash_path_user_data_tests, regex_pattern=regex_pattern)
+
+        logger.info('Checking for Broken Access Control:')
+        bac_results = PostRunTests.run_broken_access_control_tests(results, test_data_config)
+        results += run_test(test_runner=test_runner, tests=bac_results, regex_pattern=regex_pattern, skip_test_run=True)
+    
 
     # save file to output if output flag is present
     if output_file:

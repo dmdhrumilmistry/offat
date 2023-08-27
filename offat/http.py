@@ -74,6 +74,7 @@ class AsyncRequests:
         
             if is_new_session:
                 await session.close()
+                del session
 
         return resp_data
 
