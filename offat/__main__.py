@@ -14,7 +14,7 @@ def start():
     parser.add_argument('-dr', '--delay-rate', dest='delay_rate', help='API requests delay rate in seconds. -rl should be passed in order to use this option', type=float, default=None, required=False)
     parser.add_argument('-pr','--path-regex', dest='path_regex_pattern', type=str, help='run tests for paths matching given regex pattern', required=False, default=None)
     parser.add_argument('-o', '--output', dest='output_file', type=str, help='path to store test results in json format', required=False, default=None)
-    parser.add_argument('-H', '--headers', dest='headers', type=str, help='HTTP requests headers that should be sent during testing eg: User-Agent: offat,Authorization: Bearer yourToken', required=False, default=None, action='append', nargs='*')
+    parser.add_argument('-H', '--headers', dest='headers', type=str, help='HTTP requests headers that should be sent during testing eg: User-Agent: offat', required=False, default=None, action='append', nargs='*')
     parser.add_argument('-tdc','--test-data-config', dest='test_data_config',help='YAML file containing user test data for tests', required=False, type=str)
     args = parser.parse_args()
 
