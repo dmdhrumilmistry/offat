@@ -103,9 +103,7 @@ def generate_and_run_tests(api_parser:OpenAPIParser, regex_pattern:str=None, out
 
         logger.info('Checking for Broken Access Control:')
         bac_results = PostRunTests.run_broken_access_control_tests(results, test_data_config)
-        bac_result_table = test_table_generator.generate_result_table(deepcopy(bac_results))
-        print(bac_result_table)
-        results += bac_results
+        results += run_test(test_runner=test_runner, tests=bac_results, regex_pattern=regex_pattern, skip_test_run=True)
     
 
     # save file to output if output flag is present
