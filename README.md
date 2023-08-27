@@ -1,5 +1,7 @@
 # OFFAT - OFFensive Api Tester
 
+![OffAT Logo](./.images/logos/offat.png)
+
 Automatically Tests for vulnerabilities after generating tests from openapi specification file. Project is in Beta stage, so sometimes it might crash while running.
 
 ![UnDocumented petstore API endpoint HTTP method results](./.images/tests/offat-v0.5.0.png)
@@ -11,6 +13,7 @@ Automatically Tests for vulnerabilities after generating tests from openapi spec
 - [X] BOLA (Might need few bug fixes)
 - [X] Data Exposure (Detects Common Data Exposures)
 - [X] BOPLA / Mass Assignment
+- [X] Broken Access Control
 - [ ] Broken Authentication
 
 ## Demo
@@ -157,7 +160,7 @@ The disclaimer advises users to use the open-source project for ethical and legi
           value: +11233211230
           type: str
 
-      unauthorized_endpoints:
+      unauthorized_endpoints: # For broken access control
         - '/store/order/.*'
 
   - actor2:
