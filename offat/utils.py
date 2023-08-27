@@ -113,8 +113,8 @@ def write_json_to_file(json_data:dict, file_path:str):
     except JSONDecodeError:
         logger.error(f'Invalid JSON data, error while writing to {file_path} file.')
 
-    except Exception as e:
-        logger.error(repr(e))
+    # except Exception as e:
+        # logger.error(repr(e))
 
     return False
 

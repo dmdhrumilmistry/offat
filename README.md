@@ -157,6 +157,9 @@ The disclaimer advises users to use the open-source project for ethical and legi
           value: +11233211230
           type: str
 
+      unauthorized_endpoints:
+        - '/store/order/.*'
+
   - actor2:
       request_headers:
         - name: Authorization

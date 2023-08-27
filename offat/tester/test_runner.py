@@ -90,6 +90,7 @@ class TestRunner:
         except ConnectionRefusedError:
             logger.error('Connection Failed! Server refused Connection!!')
 
+        # TODO: move this filter to result processing module
         test_result = test_task
         if isinstance(response, dict) and response.get('status') in success_codes:
             result = False # test failed
@@ -109,6 +110,7 @@ class TestRunner:
         test_result['redirection'] = response.get('res_redirection', '')
 
         # run data leak test
+        # TODO: run this test in result processing module
         data_exposures_dict = detect_data_exposure(str(res_body))
         test_result['data_leak'] = data_exposures_dict
 

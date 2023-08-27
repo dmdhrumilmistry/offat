@@ -573,9 +573,9 @@ class TestGenerator:
         actor2_data = user_data.get('actors',[])[1].get('actor2',{})
 
         if test_for_actor1:
-            new_tests += populate_user_data(actor1_data, tests)
+            new_tests += populate_user_data(actor1_data, 'actor1',tests)
 
         if test_for_actor2:
-            new_tests += populate_user_data(actor2_data, tests)
+            new_tests += populate_user_data(actor2_data, 'actor2', tests)
 
         return new_tests
