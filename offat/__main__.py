@@ -1,5 +1,4 @@
 from argparse import ArgumentParser
-from pprint import pprint
 
 
 from .config_data_handler import validate_config_file_data

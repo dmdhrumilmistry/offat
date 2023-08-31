@@ -56,6 +56,16 @@ The disclaimer advises users to use the open-source project for ethical and legi
   python3 -m pip install offat
   ```
 
+### Using Containers
+
+### Docker
+
+- Build Image
+
+  ```bash
+  docker build -t offat .
+  ```
+
 ### Manual Method
 
 - Open terminal
