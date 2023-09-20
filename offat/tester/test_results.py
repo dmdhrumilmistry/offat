@@ -32,10 +32,20 @@ class TestResultTable:
                 result['status_code'] = result.get('response_status_code')
                 del result['response_status_code']
 
+            if result.get('success_codes'):
+                del result['success_codes']
+
+            if result.get('regex_match_result'):
+                del result['regex_match_result']
+
+            if result.get('response_match_regex'):
+                del result['response_match_regex']
+
             if result.get('data_leak'):
                 result['data_leak'] = u"\u2713"
             else:
                 result['data_leak'] = u"\u00d7"
+
 
             if not isinstance(result.get('malicious_payload'), str):
                 del result['malicious_payload']
@@ -45,7 +55,6 @@ class TestResultTable:
             del result['kwargs']
             del result['test_name']
             del result['response_filter']
-            del result['success_codes']
             del result['body_params']
             del result['request_headers']
             del result['redirection']
