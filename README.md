@@ -14,6 +14,7 @@ Automatically Tests for vulnerabilities after generating tests from openapi spec
 - [X] Data Exposure (Detects Common Data Exposures)
 - [X] BOPLA / Mass Assignment
 - [X] Broken Access Control
+- [X] Basic Command Injection
 - [ ] Broken Authentication
 
 ## Demo

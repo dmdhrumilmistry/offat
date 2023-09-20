@@ -18,10 +18,9 @@ test_table_generator = TestResultTable()
 test_generator = TestGenerator()
 
 
-def run_test(test_runner:TestRunner, tests:list[dict], regex_pattern:str=None, skip_test_run:bool=False) -> list:
+def run_test(test_runner:TestRunner, tests:list[dict], regex_pattern:str=None, skip_test_run:bool=False, post_run_matcher_test:bool=False) -> list:
     '''Run tests and print result on console'''
     global test_table_generator
-
     # filter data if regex is passed
     if regex_pattern:
         tests = list(
@@ -35,6 +34,10 @@ def run_test(test_runner:TestRunner, tests:list[dict], regex_pattern:str=None, s
         test_results = tests
     else:
         test_results = run(test_runner.run_tests(tests))
+
+    if post_run_matcher_test:
+        test_results = PostRunTests.matcher(test_results)
+    
     results = test_table_generator.generate_result_table(deepcopy(test_results))
     print(results)
     return test_results
@@ -60,6 +63,11 @@ def generate_and_run_tests(api_parser:OpenAPIParser, regex_pattern:str=None, out
     logger.info('Checking for SQLi vulnerability:')
     sqli_fuzz_tests = test_generator.sqli_fuzz_params_test(api_parser)
     results += run_test(test_runner=test_runner, tests=sqli_fuzz_tests, regex_pattern=regex_pattern)
+
+    # OS Command Injection Fuzz Test
+    logger.info('Checking for OS Command Injection Vulnerability with fuzzed params and checking response body:')
+    os_command_injection_tests = test_generator.os_command_injection_fuzz_params_test(api_parser)
+    results += run_test(test_runner=test_runner, tests=os_command_injection_tests, regex_pattern=regex_pattern, post_run_matcher_test=True)
    
     # BOLA path tests with fuzzed data
     logger.info('Checking for BOLA in PATH using fuzzed params:')
@@ -92,7 +100,7 @@ def generate_and_run_tests(api_parser:OpenAPIParser, regex_pattern:str=None, out
         results += run_test(test_runner=test_runner, tests=bola_fuzzed_user_data_tests, regex_pattern=regex_pattern)
 
         # BOLA path test with fuzzed + user data + trailing slash
-        logger.info('Checking for BOLA in PATH with trailing slash and id using fuzzed and user provided params:')
+        logger.info('Checking for BOLA in PATH with trailing slash id using fuzzed and user provided params:')
         bola_trailing_slash_path_user_data_tests = test_generator.test_with_user_data(
             test_data_config,
             test_generator.bola_fuzz_trailing_slash_path_test,
@@ -100,6 +108,15 @@ def generate_and_run_tests(api_parser:OpenAPIParser, regex_pattern:str=None, out
             success_codes=[200, 201, 301],
         )
         results += run_test(test_runner=test_runner, tests=bola_trailing_slash_path_user_data_tests, regex_pattern=regex_pattern)
+
+        # OS Command Injection Fuzz Test
+        logger.info('Checking for OS Command Injection Vulnerability with fuzzed & user params and checking response body:')
+        os_command_injection_with_user_data_tests = test_generator.test_with_user_data(
+            test_data_config,
+            test_generator.os_command_injection_fuzz_params_test,
+            openapi_parser=api_parser,
+        )
+        results += run_test(test_runner=test_runner, tests=os_command_injection_with_user_data_tests, regex_pattern=regex_pattern, post_run_matcher_test=True)
 
         logger.info('Checking for Broken Access Control:')
         bac_results = PostRunTests.run_broken_access_control_tests(results, test_data_config)
