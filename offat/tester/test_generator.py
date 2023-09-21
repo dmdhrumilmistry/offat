@@ -582,12 +582,65 @@ class TestGenerator:
         return new_tests
     
 
-    def os_command_injection_fuzz_params_test(
+    def __generate_injection_fuzz_params_test(
             self,
             openapi_parser:OpenAPIParser,
+            test_name:str,
+            result_details:dict,
+            payloads_data:list[dict],
             *args,
             **kwargs
     ):
+        '''Performs injection parameter fuzzing based on the provided OpenAPIParser instance and matches injected payload using regex in response.
+    
+        Args:
+            openapi_parser (OpenAPIParser): An instance of the OpenAPIParser class containing the parsed OpenAPI specification.
+            payloads_data (list[dict]): list of dictionary containing malicious request payload and regex for matching injection in response.
+            *args: Variable-length positional arguments.
+            **kwargs: Arbitrary keyword arguments.
+        
+        Returns:
+            List: List of dictionaries containing tests for SQLi
+        
+        Raises:
+            Any exceptions raised during the execution.
+        '''
+        # fuzz params
+        fuzzed_request_list = self.__fuzz_request_params(openapi_parser)
+
+        # inject command injection payloads in string variables
+        tasks = []
+        for payload_dict in payloads_data:
+            for request_obj in fuzzed_request_list:
+                payload = payload_dict['request_payload']
+
+                # handle body request params
+                body_request_params = request_obj.get('body_params',[])
+                malicious_body_request_params = self.__inject_payload_in_params(body_request_params, payload)
+
+                # handle query request params
+                query_request_params = request_obj.get('query_params',[])
+                malicious_query_request_params = self.__inject_payload_in_params(query_request_params, payload)
+
+                request_obj['test_name'] = test_name
+                
+                request_obj['body_params'] = malicious_body_request_params
+                request_obj['query_params'] = malicious_query_request_params
+                request_obj['args'] = args
+                request_obj['kwargs'] = kwargs
+                
+                request_obj['malicious_payload'] = payload
+                
+                request_obj['result_details'] = result_details
+                request_obj['response_filter'] = TestRunnerFiltersEnum.BODY_REGEX_FILTER.name
+                request_obj['response_match_regex'] = payload_dict.get('response_match_regex') 
+
+                tasks.append(deepcopy(request_obj))
+
+        return tasks
+    
+
+    def os_command_injection_fuzz_params_test(self, openapi_parser:OpenAPIParser):
         '''Performs OS Command injection parameter fuzzing based on the provided OpenAPIParser instance.
     
         Args:
@@ -601,7 +654,8 @@ class TestGenerator:
         Raises:
             Any exceptions raised during the execution.
         '''
-        tasks = []
+        test_name='OS Command Injection Test'
+
         payloads_data = [
             {
                 "request_payload":"cat /etc/passwd",
@@ -617,37 +671,58 @@ class TestGenerator:
             },
         ]
 
-        fuzzed_request_list = self.__fuzz_request_params(openapi_parser)
+        result_details = {
+            True:'Parameters are not vulnerable to OS Command Injection', # passed
+            False:'One or more parameter is vulnerable to OS Command Injection Attack', # failed
+        }
 
-        # inject command injection payloads in string variables
-        for payload_dict in payloads_data:
-            for request_obj in fuzzed_request_list:
-                payload = payload_dict['request_payload']
+        return self.__generate_injection_fuzz_params_test(
+            openapi_parser=openapi_parser,
+            test_name=test_name,
+            result_details=result_details,
+            payloads_data=payloads_data,
+        )
+    
+    
+    def xss_html_injection_fuzz_params_test(self, openapi_parser:OpenAPIParser):
+        '''Performs OS Command injection parameter fuzzing based on the provided OpenAPIParser instance.
+    
+        Args:
+            openapi_parser (OpenAPIParser): An instance of the OpenAPIParser class containing the parsed OpenAPI specification.
+            *args: Variable-length positional arguments.
+            **kwargs: Arbitrary keyword arguments.
+        
+        Returns:
+            List: List of dictionaries containing tests for SQLi
+        
+        Raises:
+            Any exceptions raised during the execution.
+        '''
+        test_name='XSS/HTML Injection Test'
 
-                # handle body request params
-                body_request_params = request_obj.get('body_params',[])
-                malicious_body_request_params = self.__inject_payload_in_params(body_request_params, payload)
+        payloads_data = [
+            {
+                "request_payload":"<script>confirm(1)</script>",
+                "response_match_regex":r"<script[^>]*>.*<\/script>",
+            },
+            {
+                "request_payload":"<script>alert(1)</script>",
+                "response_match_regex":r"<script[^>]*>.*<\/script>",
+            },
+            {
+                "request_payload":"<img src=x onerror='javascript:confirm(1)'>",
+                "response_match_regex":r"<img[^>]*>",
+            },
+        ]
 
-                # handle query request params
-                query_request_params = request_obj.get('query_params',[])
-                malicious_query_request_params = self.__inject_payload_in_params(query_request_params, payload)
+        result_details = {
+            True:'Parameters are not vulnerable to XSS/HTML Injection Attack', # passed
+            False:'One or more parameter is vulnerable to XSS/HTML Injection Attack', # failed
+        }
 
-                request_obj['test_name'] = 'OS Command Injection Test'
-                
-                request_obj['body_params'] = malicious_body_request_params
-                request_obj['query_params'] = malicious_query_request_params
-                request_obj['args'] = args
-                request_obj['kwargs'] = kwargs
-                
-                request_obj['malicious_payload'] = payload
-                
-                request_obj['result_details'] = {
-                    True:'Parameters are not vulnerable to OS Command Injection', # passed
-                    False:'One or more parameter is vulnerable to OS Command Injection Attack', # failed
-                }
-                request_obj['response_filter'] = TestRunnerFiltersEnum.BODY_REGEX_FILTER.name
-                request_obj['response_match_regex'] = payload_dict.get('response_match_regex') 
-
-                tasks.append(deepcopy(request_obj))
-
-        return tasks
+        return self.__generate_injection_fuzz_params_test(
+            openapi_parser=openapi_parser,
+            test_name=test_name,
+            result_details=result_details,
+            payloads_data=payloads_data,
+        )

@@ -15,6 +15,7 @@ Automatically Tests for vulnerabilities after generating tests from openapi spec
 - [X] BOPLA / Mass Assignment
 - [X] Broken Access Control
 - [X] Basic Command Injection
+- [X] Basic XSS/HTML Injection test
 - [ ] Broken Authentication
 
 ## Demo
