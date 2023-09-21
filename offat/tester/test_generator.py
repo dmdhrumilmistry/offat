@@ -1,4 +1,5 @@
 from copy import deepcopy
+from pprint import pprint
 from .fuzzer import fill_params
 from .test_runner import TestRunnerFiltersEnum
 from .fuzzer import generate_random_int
@@ -178,15 +179,15 @@ class TestGenerator:
         return tasks
     
 
-    def __inject_sqli_payload_in_params(self, request_params:list[dict], sqli_payload:str):
+    def __inject_payload_in_params(self, request_params:list[dict], payload:str):
         """
-        Injects SQL injection (SQLi) payload into the request parameters.
+        Injects payload into the request parameters.
 
         This method modifies the provided request parameters by injecting the SQLi payload.
 
         Args:
             request_params (list[dict]): A list of dictionaries representing the request parameters.
-            sqli_payload (str): The SQL injection payload to be injected into the request parameters.
+            payload (str): The injection payload to be injected into the request parameters.
 
         Returns:
             list: returns list of sqli injection parameters for API testing
@@ -197,7 +198,7 @@ class TestGenerator:
         for request_param_data in request_params:
             # TODO: inject sqli payloads in other data types as well
             if request_param_data.get('type') == 'string':
-                request_param_data['value'] = sqli_payload
+                request_param_data['value'] = payload
 
         return request_params
         
@@ -243,11 +244,11 @@ class TestGenerator:
             for request_obj in fuzzed_request_list:
                 # handle body request params
                 body_request_params = request_obj.get('body_params',[])
-                malicious_body_request_params = self.__inject_sqli_payload_in_params(body_request_params, sqli_payload)
+                malicious_body_request_params = self.__inject_payload_in_params(body_request_params, sqli_payload)
 
                 # handle query request params
                 query_request_params = request_obj.get('query_params',[])
-                malicious_query_request_params = self.__inject_sqli_payload_in_params(query_request_params, sqli_payload)
+                malicious_query_request_params = self.__inject_payload_in_params(query_request_params, sqli_payload)
 
                 request_obj['test_name'] = 'SQLi Test'
                 
@@ -522,7 +523,7 @@ class TestGenerator:
                 'test_name':'BOPLA Test',
                 'url': f'{base_url}{endpoint_path}',
                 'endpoint': path_obj.get('path'),
-                'method': path_obj.get('http_method').upper(),
+                'method': path_obj.get('http_method','').upper(),
                 'body_params':request_body_params,
                 'query_params':request_query_params,
                 'path_params':path_params,
@@ -579,3 +580,149 @@ class TestGenerator:
             new_tests += populate_user_data(actor2_data, 'actor2', tests)
 
         return new_tests
+    
+
+    def __generate_injection_fuzz_params_test(
+            self,
+            openapi_parser:OpenAPIParser,
+            test_name:str,
+            result_details:dict,
+            payloads_data:list[dict],
+            *args,
+            **kwargs
+    ):
+        '''Performs injection parameter fuzzing based on the provided OpenAPIParser instance and matches injected payload using regex in response.
+    
+        Args:
+            openapi_parser (OpenAPIParser): An instance of the OpenAPIParser class containing the parsed OpenAPI specification.
+            payloads_data (list[dict]): list of dictionary containing malicious request payload and regex for matching injection in response.
+            *args: Variable-length positional arguments.
+            **kwargs: Arbitrary keyword arguments.
+        
+        Returns:
+            List: List of dictionaries containing tests for SQLi
+        
+        Raises:
+            Any exceptions raised during the execution.
+        '''
+        # fuzz params
+        fuzzed_request_list = self.__fuzz_request_params(openapi_parser)
+
+        # inject command injection payloads in string variables
+        tasks = []
+        for payload_dict in payloads_data:
+            for request_obj in fuzzed_request_list:
+                payload = payload_dict['request_payload']
+
+                # handle body request params
+                body_request_params = request_obj.get('body_params',[])
+                malicious_body_request_params = self.__inject_payload_in_params(body_request_params, payload)
+
+                # handle query request params
+                query_request_params = request_obj.get('query_params',[])
+                malicious_query_request_params = self.__inject_payload_in_params(query_request_params, payload)
+
+                request_obj['test_name'] = test_name
+                
+                request_obj['body_params'] = malicious_body_request_params
+                request_obj['query_params'] = malicious_query_request_params
+                request_obj['args'] = args
+                request_obj['kwargs'] = kwargs
+                
+                request_obj['malicious_payload'] = payload
+                
+                request_obj['result_details'] = result_details
+                request_obj['response_filter'] = TestRunnerFiltersEnum.BODY_REGEX_FILTER.name
+                request_obj['response_match_regex'] = payload_dict.get('response_match_regex') 
+
+                tasks.append(deepcopy(request_obj))
+
+        return tasks
+    
+
+    def os_command_injection_fuzz_params_test(self, openapi_parser:OpenAPIParser):
+        '''Performs OS Command injection parameter fuzzing based on the provided OpenAPIParser instance.
+    
+        Args:
+            openapi_parser (OpenAPIParser): An instance of the OpenAPIParser class containing the parsed OpenAPI specification.
+            *args: Variable-length positional arguments.
+            **kwargs: Arbitrary keyword arguments.
+        
+        Returns:
+            List: List of dictionaries containing tests for SQLi
+        
+        Raises:
+            Any exceptions raised during the execution.
+        '''
+        test_name='OS Command Injection Test'
+
+        payloads_data = [
+            {
+                "request_payload":"cat /etc/passwd",
+                "response_match_regex":r"root:.*"
+            },
+            {
+                "request_payload":"cat /etc/shadow",
+                "response_match_regex":r"root:.*"
+            },
+            {
+                "request_payload":"ls -la",
+                "response_match_regex":r"total\s\d+"
+            },
+        ]
+
+        result_details = {
+            True:'Parameters are not vulnerable to OS Command Injection', # passed
+            False:'One or more parameter is vulnerable to OS Command Injection Attack', # failed
+        }
+
+        return self.__generate_injection_fuzz_params_test(
+            openapi_parser=openapi_parser,
+            test_name=test_name,
+            result_details=result_details,
+            payloads_data=payloads_data,
+        )
+    
+    
+    def xss_html_injection_fuzz_params_test(self, openapi_parser:OpenAPIParser):
+        '''Performs OS Command injection parameter fuzzing based on the provided OpenAPIParser instance.
+    
+        Args:
+            openapi_parser (OpenAPIParser): An instance of the OpenAPIParser class containing the parsed OpenAPI specification.
+            *args: Variable-length positional arguments.
+            **kwargs: Arbitrary keyword arguments.
+        
+        Returns:
+            List: List of dictionaries containing tests for SQLi
+        
+        Raises:
+            Any exceptions raised during the execution.
+        '''
+        test_name='XSS/HTML Injection Test'
+
+        payloads_data = [
+            {
+                "request_payload":"<script>confirm(1)</script>",
+                "response_match_regex":r"<script[^>]*>.*<\/script>",
+            },
+            {
+                "request_payload":"<script>alert(1)</script>",
+                "response_match_regex":r"<script[^>]*>.*<\/script>",
+            },
+            {
+                "request_payload":"<img src=x onerror='javascript:confirm(1)'>",
+                "response_match_regex":r"<img[^>]*>",
+            },
+        ]
+
+        result_details = {
+            True:'Parameters are not vulnerable to XSS/HTML Injection Attack', # passed
+            False:'One or more parameter is vulnerable to XSS/HTML Injection Attack', # failed
+        }
+
+        return self.__generate_injection_fuzz_params_test(
+            openapi_parser=openapi_parser,
+            test_name=test_name,
+            result_details=result_details,
+            payloads_data=payloads_data,
+        )

@@ -1,6 +1,8 @@
 from copy import deepcopy
-from pprint import pprint
 from re import search as re_search
+from pprint import pprint
+
+from .test_runner import TestRunnerFiltersEnum
 
 class PostRunTests:
     '''class Includes tests that should be ran after running all the active test'''
@@ -20,6 +22,18 @@ class PostRunTests:
             Any Exception occurred during the test.
         '''
         def re_match(patterns:list[str], endpoint:str) -> bool:
+            '''Matches endpoint for specified patterns
+            
+            Args:
+                patterns (list[str]): endpoint regex pattern for matching endpoints
+                endpoint (str): Endpoint to test for match
+
+            Returns:
+                bool: True if match found from any of the regex pattern else False
+
+            Exception:
+                Any Exception occurred during test procedure.
+            '''
             for pattern in patterns:
                 if re_search(pattern, endpoint):
                     return True
@@ -66,3 +80,46 @@ class PostRunTests:
         new_result['result_details'] = result['result_details'].get(res_status)
 
         return new_result
+    
+    @staticmethod
+    def matcher(results:list[dict]):
+        '''
+        
+        Args:
+            results (list[dict]): list of dict for tests results ran
+            match_location (ResponseMatchLocation): Search for match at 
+            specified location (`ResponseMatchLocation.BODY`, 
+            `ResponseMatchLocation.HEADER`,`ResponseMatchLocation.STATUS_CODE`).
+            match_regex (str): regex to match as string
+
+        Returns:
+            list[dict]: list of results 
+
+        Raises:
+            Any Exception occurred during the test.
+        '''
+        new_results = []
+
+        for result in results:
+            match_location = result.get('response_filter')
+            match_regex = result.get('response_match_regex')
+            
+            # skip test if match regex not found
+            if not match_regex or not match_location:
+                continue
+
+            match match_location:
+                case TestRunnerFiltersEnum.STATUS_CODE_FILTER:
+                    target_data = result.get('response_status_code')
+                case TestRunnerFiltersEnum.HEADER_REGEX_FILTER:
+                    target_data = result.get('response_body')
+                case _: # TestRunnerFiltersEnum.BODY_REGEX_FILTER.name:
+                    target_data = result.get('response_body')
+
+            match_response = re_search(match_regex, target_data)
+            new_result = deepcopy(result)
+            new_result['regex_match_result'] = str(match_response)
+            new_result['result'] = not bool(match_response) # None (no match) -> False (Vulnerable) -> Not False (not Vulnerable) 
+            new_results.append(new_result)
+
+        return new_results

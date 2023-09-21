@@ -52,5 +52,26 @@ def start():
         test_data_config=test_data_config,
     )
 
+
+def banner():
+    print(r'''
+      _/|       |\_
+     /  |       |  \
+    |    \     /    |
+    |  \ /     \ /  |
+    | \  |     |  / |
+    | \ _\_/^\_/_ / |
+    |    --\//--    |
+     \_  \     /  _/
+       \__  |  __/
+          \ _ /
+         _/   \_   
+        / _/|\_ \  
+         /  |  \   
+          / v \
+          OFFAT
+    ''')
+
 if __name__ == '__main__':
+    banner()
     start()
