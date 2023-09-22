@@ -7,8 +7,30 @@ from .openapi import OpenAPIParser
 from .utils import get_package_version, headers_list_to_dict, read_yaml
 
 
+def banner():
+    print(r'''
+      _/|       |\_
+     /  |       |  \
+    |    \     /    |
+    |  \ /     \ /  |
+    | \  |     |  / |
+    | \ _\_/^\_/_ / |
+    |    --\//--    |
+     \_  \     /  _/
+       \__  |  __/
+          \ _ /
+         _/   \_   
+        / _/|\_ \  
+         /  |  \   
+          / v \
+          OFFAT
+    ''')
+
+
 def start():
     '''Starts cli tool'''
+    banner()
+
     parser = ArgumentParser(prog='offat')
     parser.add_argument('-f','--file', dest='fpath', type=str, help='path of openapi/swagger specification file', required=True)
     parser.add_argument('-v','--version', action='version', version=f'%(prog)s {get_package_version()}')
@@ -53,25 +75,5 @@ def start():
     )
 
 
-def banner():
-    print(r'''
-      _/|       |\_
-     /  |       |  \
-    |    \     /    |
-    |  \ /     \ /  |
-    | \  |     |  / |
-    | \ _\_/^\_/_ / |
-    |    --\//--    |
-     \_  \     /  _/
-       \__  |  __/
-          \ _ /
-         _/   \_   
-        / _/|\_ \  
-         /  |  \   
-          / v \
-          OFFAT
-    ''')
-
 if __name__ == '__main__':
-    banner()
     start()
