@@ -1,0 +1,5 @@
+FROM dmdhrumilmistry/offat-backend-base:latest
+
+EXPOSE 8000
+
+CMD [ "python", "-m", "offat.api" ]
