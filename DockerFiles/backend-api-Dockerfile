@@ -1,5 +1,5 @@
-FROM dmdhrumilmistry/offat-backend-base:latest
+FROM dmdhrumilmistry/offat-base:latest
 
 EXPOSE 8000
 
-CMD [ "python", "-m", "offat.api" ]
+ENTRYPOINT [ "python", "-m", "offat.api" ]

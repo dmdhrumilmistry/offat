@@ -9,4 +9,4 @@ COPY ../ /offat/
 
 RUN python3 -m pip install -U pip
 
-RUN python -m pip install -e .
+RUN python -m pip install -e ".[api]"

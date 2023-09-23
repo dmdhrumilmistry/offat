@@ -1,4 +1,4 @@
-FROM dmdhrumilmistry/offat-backend-base:latest
+FROM dmdhrumilmistry/offat-base:latest
 
 WORKDIR /offat
 

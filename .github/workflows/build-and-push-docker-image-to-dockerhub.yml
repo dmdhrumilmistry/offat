@@ -23,8 +23,9 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           push: true
-          file: ./Dockerfiles/Dockerfile
+          file: ./Dockerfiles/base-Dockerfile
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/offat-base:latest
+    
     
   push-cli-docker-image:
     runs-on: ubuntu-latest
@@ -43,5 +44,5 @@ jobs:
         with:
           platforms: linux/amd64,linux/arm64
           push: true
-          file: ./Dockerfiles/BaseDockerfile
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/offat-base:latest
+          file: ./Dockerfiles/cli-Dockerfile
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/offat:latest
