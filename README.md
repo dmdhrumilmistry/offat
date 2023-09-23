@@ -6,7 +6,7 @@ Automatically Tests for vulnerabilities after generating tests from openapi spec
 
 ![UnDocumented petstore API endpoint HTTP method results](./.images/tests/offat-v0.5.0.png)
 
-## Features
+## Security Checks
 
 - [X] Restricted HTTP Methods
 - [X] SQLi
@@ -17,6 +17,16 @@ Automatically Tests for vulnerabilities after generating tests from openapi spec
 - [X] Basic Command Injection
 - [X] Basic XSS/HTML Injection test
 - [ ] Broken Authentication
+
+## Features
+
+- Few Security Checks from OWASP API Top 10
+- Automated Testing
+- User Config
+- API for Automating tests and Integrating Tool with other platforms/tools
+- CLI tool
+- Dockerized Project for Easy Usage
+- Open Source Tool with MIT License
 
 ## Demo
 
@@ -55,7 +65,8 @@ The disclaimer advises users to use the open-source project for ethical and legi
 - Install Release from PyPi
 
   ```bash
-  python3 -m pip install offat
+  python3 -m pip install offat        # only cli tool
+  python3 -m pip install offat[api]   # cli + api
   ```
 
 ### Using Containers
@@ -65,8 +76,22 @@ The disclaimer advises users to use the open-source project for ethical and legi
 - Build Image
 
   ```bash
-  docker build -t offat .
+  make build-local-images
   ```
+
+- CLI Tool
+
+  ```bash
+  docker run --rm dmdhrumilmistry/offat
+  ```
+
+- API
+
+  ```bash
+  docker compose up -d
+  ```
+
+  > POST `openapi` documentation to `/api/v1/scan/` endpoint with its valid `type` (json/yaml); `job_id` will be returned, `job_id` should
 
 ### Manual Method
 
@@ -100,6 +125,18 @@ The disclaimer advises users to use the open-source project for ethical and legi
   ```
 
 ## Start OffAT
+
+### API
+
+- Start API Server
+
+  ```bash
+  python -m offat.api
+  ```
+
+- API Documentation can be found at <http://localhost:8000/docs>
+
+### CLI Tool
 
 - Run offat
 
