@@ -1,7 +1,7 @@
 from fastapi import status, Response
 from json import loads as json_loads
 from yaml import SafeLoader, load as yaml_loads
-from .config import app, task_queue
+from .config import app, task_queue, task_timeout
 from .jobs import scan_api
 from .models import CreateScanModel
 from ..logger import create_logger
@@ -43,7 +43,7 @@ async def add_scan_task(postData: CreateScanModel, response: Response):
             create_task = False
     
     if create_task:
-        job = task_queue.enqueue(scan_api, openapi_doc)
+        job = task_queue.enqueue(scan_api, openapi_doc, job_timeout=task_timeout)
         msg['job_id'] = job.id
 
     return msg
@@ -64,6 +64,14 @@ async def get_scan_task_result(job_id:str, response:Response):
         msg = {
             'msg':'Task Completed',
             'results': scan_results.result,
+        }
+        response.status_code = status.HTTP_200_OK
+
+
+    elif scan_results and scan_results.is_failed:
+        msg = {
+            'msg':'Task Failed. Try Creating Task Again.',
+            'results': None,
         }
         response.status_code = status.HTTP_200_OK
 

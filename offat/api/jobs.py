@@ -2,9 +2,9 @@ from ..tester.tester_utils import generate_and_run_tests
 from ..openapi import OpenAPIParser
 
 
-async def scan_api(open_api:str):
+def scan_api(open_api:dict):
     # TODO: validate `open_api` str against openapi specs. 
-    api_parser = OpenAPIParser(open_api)
+    api_parser = OpenAPIParser(fpath=None,spec=open_api)
 
     # TODO: accept commented options from API
     results = generate_and_run_tests(
