@@ -24,7 +24,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: ./Dockerfiles/base-Dockerfile
+          file: ./DockerFiles/base-Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/offat-base:dev
           platforms: linux/amd64,linux/arm64
@@ -47,7 +47,7 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           context: .
-          file: ./Dockerfiles/cli-Dockerfile
+          file: ./DockerFiles/cli-Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/offat:dev
           platforms: linux/amd64,linux/arm64
