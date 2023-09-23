@@ -7,14 +7,17 @@ logger = create_logger(__name__)
 
 class OpenAPIParser:
     ''''''
-    def __init__(self, fpath:str) -> None:
-        self._parser = ResolvingParser(fpath, backend = 'openapi-spec-validator')
-        if self._parser.valid:
-            logger.info('Specification file is valid')
+    def __init__(self, fpath:str, spec:dict=None) -> None:
+        if fpath:
+            self._parser = ResolvingParser(fpath, backend = 'openapi-spec-validator')
+            if self._parser.valid:
+                logger.info('Specification file is valid')
+            else:
+                logger.error('Specification file is invalid!')
+            self._spec = self._parser.specification
         else:
-            logger.error('Specification file is invalid!')
-
-        self._spec = self._parser.specification
+            self._spec = spec
+            
         self.host = self._spec.get('host')
         self.base_url = f"http://{self.host}{self._spec.get('basePath','')}"
         self.request_response_params = self._get_request_response_params()
