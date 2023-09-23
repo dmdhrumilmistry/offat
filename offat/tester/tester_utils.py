@@ -147,4 +147,4 @@ def generate_and_run_tests(api_parser:OpenAPIParser, regex_pattern:str=None, out
             file_path=output_file
         )
 
-    
+    return results

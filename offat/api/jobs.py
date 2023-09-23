@@ -1,4 +1,19 @@
+from ..tester.tester_utils import generate_and_run_tests
+from ..openapi import OpenAPIParser
+
+
 async def scan_api(open_api:str):
-    # TODO: add scan task to queue
-    print(open_api)
-    return 'test'
+    # TODO: validate `open_api` str against openapi specs. 
+    api_parser = OpenAPIParser(open_api)
+
+    # TODO: accept commented options from API
+    results = generate_and_run_tests(
+        api_parser=api_parser,
+        # regex_pattern=args.path_regex_pattern,
+        # output_file=args.output_file,
+        # req_headers=headers_dict,
+        # rate_limit=rate_limit,
+        # delay=delay_rate,
+        # test_data_config=test_data_config,
+    )
+    return results

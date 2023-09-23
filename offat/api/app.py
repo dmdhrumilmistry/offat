@@ -1,15 +1,14 @@
 from fastapi import status, Response
 from json import loads as json_loads
-from uuid import uuid4
 from yaml import SafeLoader, load as yaml_loads
-from .config import app, task_queue, redis_con
+from .config import app, task_queue
 from .jobs import scan_api
 from .models import CreateScanModel
+from ..logger import create_logger
 
-import logging
 
-logging.basicConfig(level=logging.DEBUG,format="[%(asctime)s.%(msecs)03d] %(levelname)s [%(thread)d] - %(msg)s")
-logger = logging.getLogger(__name__)
+logger = create_logger(__name__)
+
 
 @app.get('/', status_code=status.HTTP_200_OK)
 async def root():
