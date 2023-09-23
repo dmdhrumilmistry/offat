@@ -9,6 +9,8 @@ jobs:
   push-base-docker-image:
     runs-on: ubuntu-latest
     steps:
+      - name: Branch Checkout
+        uses: actions/checkout@v2
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -31,6 +33,8 @@ jobs:
   push-cli-docker-image:
     runs-on: ubuntu-latest
     steps:
+      - name: Branch Checkout
+        uses: actions/checkout@v2
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
