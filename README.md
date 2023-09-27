@@ -6,6 +6,12 @@ Automatically Tests for vulnerabilities after generating tests from openapi spec
 
 ![UnDocumented petstore API endpoint HTTP method results](./.images/tests/offat-v0.5.0.png)
 
+## Notice
+
+Project proposal has been approved by the OWASP Foundation. As a result, OFFAT will now be taken care of within the OWASP Repository and will go by the name OWASP OFFAT.
+
+For the most up-to-date releases and updates, be sure to check out the OWASP OFFAT Repository at this [link](https://github.com/OWASP/OFFAT).
+
 ## Security Checks
 
 - [X] Restricted HTTP Methods
