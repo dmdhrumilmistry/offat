@@ -9,8 +9,6 @@ jobs:
   push-base-docker-image:
     runs-on: ubuntu-latest
     steps:
-      - name: Branch Checkout
-        uses: actions/checkout@v2
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -23,18 +21,15 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: .
-          file: ./DockerFiles/base-Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/offat-base:latest
           platforms: linux/amd64,linux/arm64
+          push: true
+          file: ./Dockerfiles/base-Dockerfile
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/offat-base:latest
     
     
   push-cli-docker-image:
     runs-on: ubuntu-latest
     steps:
-      - name: Branch Checkout
-        uses: actions/checkout@v2
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -47,8 +42,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v3
         with:
-          context: .
-          file: ./DockerFiles/cli-Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/offat:latest
           platforms: linux/amd64,linux/arm64
+          push: true
+          file: ./Dockerfiles/cli-Dockerfile
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/offat:latest
